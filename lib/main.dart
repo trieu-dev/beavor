@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/localization/app_translations.dart';
-import 'screens/dashboard/dashboard_screen.dart';
+import 'screens/main/main_screen.dart';
 
 void main() {
   runApp(const LuminousLedgerApp());
@@ -20,6 +20,7 @@ class LuminousLedgerApp extends StatelessWidget {
       translations: AppTranslations(),
       locale: Get.deviceLocale, // Get device locale
       fallbackLocale: const Locale('en', 'US'), // English as fallback
+      // fallbackLocale: const Locale('vi', 'VN'), // Vietnamese as fallback
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -30,7 +31,7 @@ class LuminousLedgerApp extends StatelessWidget {
         Locale('vi', 'VN'), // Vietnamese
       ],
       theme: AppTheme.darkTheme,
-      home: DashboardScreen(),
+      home: const MainScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

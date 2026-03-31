@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
-import '../add_transaction/add_transaction_screen.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
 
@@ -17,33 +16,67 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent, // Let underlying gradients show if any
       appBar: AppBar(
-        title: Text('app_title'.tr),
+        title: Text(
+          'app_title'.tr,
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.analytics_outlined),
-            onPressed: () => Get.to(() => ExpenseAnalysisScreen()),
+            icon: const Icon(Icons.notifications_none_rounded),
+            onPressed: () {},
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildWealthCard(context),
-            const SizedBox(height: 32),
-            _buildQuickActions(),
-            const SizedBox(height: 32),
-            _buildRecentTransactionsHeader(),
-            const SizedBox(height: 16),
-            _buildRecentTransactionsList(),
-          ],
+      body: TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 800),
+        tween: Tween(begin: 0.0, end: 1.0),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Transform.translate(
+              offset: Offset(0, 20 * (1 - value)),
+              child: child,
+            ),
+          );
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildWealthCard(context),
+              const SizedBox(height: 32),
+              _buildSectionHeader('quick_actions'.tr),
+              const SizedBox(height: 16),
+              _buildQuickActions(),
+              const SizedBox(height: 32),
+              _buildRecentTransactionsHeader(),
+              const SizedBox(height: 16),
+              _buildRecentTransactionsList(),
+              const SizedBox(height: 100), // Space for bottom bar
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => AddTransactionScreen()),
-        child: const Icon(Icons.add),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.manrope(
+        color: AppColors.onSurface,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -54,101 +87,173 @@ class DashboardScreen extends StatelessWidget {
       decimalDigits: 2,
     );
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        gradient: AppColors.wealthCardBackground,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.15),
-          width: 0.5,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32),
+      child: Stack(
         children: [
-          Text(
-            'net_worth'.tr,
-            style: GoogleFonts.inter(
-              color: AppColors.onSurfaceVariant,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Obx(
-            () => Text(
-              currencyFormatter.format(controller.totalBalance),
-              style: GoogleFonts.manrope(
-                color: AppColors.onSurface,
-                fontSize: 45,
-                fontWeight: FontWeight.bold,
+          // Mesh Gradient Background
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFF0F172A),
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildTrendInfo(
-                'income'.tr,
-                '\$${controller.totalIncome.toStringAsFixed(2)}',
-                AppColors.secondary,
+          ...AppColors.wealthCardMesh.map((g) => Positioned.fill(
+                child: Container(decoration: BoxDecoration(gradient: g)),
+              )),
+          
+          // Content
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1.5,
               ),
-              _buildTrendInfo(
-                'expenses'.tr,
-                '\$${controller.totalExpense.toStringAsFixed(2)}',
-                AppColors.tertiary,
-              ),
-            ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'net_worth'.tr,
+                      style: GoogleFonts.inter(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.trending_up, size: 14, color: AppColors.secondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            '+2.4%',
+                            style: GoogleFonts.inter(
+                              color: AppColors.secondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Obx(
+                  () => Text(
+                    currencyFormatter.format(controller.totalBalance),
+                    style: GoogleFonts.manrope(
+                      color: AppColors.onSurface,
+                      fontSize: 48,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTrendInfo(
+                        'income'.tr,
+                        '\$${controller.totalIncome.toStringAsFixed(2)}',
+                        AppColors.secondary,
+                        Icons.arrow_downward_rounded,
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      width: 1,
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
+                    Expanded(
+                      child: _buildTrendInfo(
+                        'expenses'.tr,
+                        '\$${controller.totalExpense.toStringAsFixed(2)}',
+                        AppColors.tertiary,
+                        Icons.arrow_upward_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTrendInfo(String label, String amount, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: AppColors.onSurfaceVariant,
-            fontSize: 12,
+  Widget _buildTrendInfo(String label, String amount, Color color, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 12, color: AppColors.onSurfaceVariant),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: AppColors.onSurfaceVariant,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          amount,
-          style: GoogleFonts.manrope(
-            color: color,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          const SizedBox(height: 6),
+          Text(
+            amount,
+            style: GoogleFonts.manrope(
+              color: AppColors.onSurface,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildQuickActions() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildActionItem(
-          Icons.history,
+          Icons.swap_vert_rounded,
           'history'.tr,
           () => Get.to(() => TransactionHistoryScreen()),
         ),
         _buildActionItem(
-          Icons.pie_chart_outline,
+          Icons.analytics_rounded,
           'analysis'.tr,
           () => Get.to(() => ExpenseAnalysisScreen()),
         ),
         _buildActionItem(
-          Icons.account_balance_wallet_outlined,
+          Icons.account_balance_wallet_rounded,
           'wallets'.tr,
+          () {},
+        ),
+        _buildActionItem(
+          Icons.more_horiz_rounded,
+          'more'.tr,
           () {},
         ),
       ],
@@ -161,14 +266,19 @@ class DashboardScreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            height: 64,
+            width: 64,
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerHigh,
-              shape: BoxShape.circle,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.05),
+                width: 1,
+              ),
             ),
             child: Icon(icon, color: AppColors.primary, size: 28),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             label,
             style: GoogleFonts.inter(
@@ -190,18 +300,24 @@ class DashboardScreen extends StatelessWidget {
           'recent_activity'.tr,
           style: GoogleFonts.manrope(
             color: AppColors.onSurface,
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
           ),
         ),
         TextButton(
           onPressed: () => Get.to(() => TransactionHistoryScreen()),
-          child: Text(
-            'see_all'.tr,
-            style: GoogleFonts.inter(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
-            ),
+          child: Row(
+            children: [
+              Text(
+                'see_all'.tr,
+                style: GoogleFonts.inter(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.primary),
+            ],
           ),
         ),
       ],
@@ -216,94 +332,110 @@ class DashboardScreen extends StatelessWidget {
 
     return Obx(() {
       if (controller.transactions.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Text(
-              'no_recent_transactions'.tr,
-              style: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
-            ),
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 40),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+          ),
+          child: Column(
+            children: [
+              Icon(Icons.inbox_outlined, size: 48, color: AppColors.onSurfaceVariant.withValues(alpha: 0.3)),
+              const SizedBox(height: 12),
+              Text(
+                'no_recent_transactions'.tr,
+                style: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
+              ),
+            ],
           ),
         );
       }
 
-      return Container(
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(32), // large corner radius
-        ),
-        padding: const EdgeInsets.all(16),
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: controller.transactions.length > 3
-              ? 3
-              : controller.transactions.length, // Show max 3
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final tx = controller.transactions[index];
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(24),
+      return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.transactions.length > 5 ? 5 : controller.transactions.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final tx = controller.transactions[index];
+          return Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.03),
+                width: 1,
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: tx.isIncome
-                          ? AppColors.secondary.withValues(alpha: 0.1)
-                          : AppColors.tertiary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      tx.isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-                      color: tx.isIncome
-                          ? AppColors.secondary
-                          : AppColors.tertiary,
-                    ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: tx.isIncome
+                        ? AppColors.secondary.withValues(alpha: 0.1)
+                        : AppColors.tertiary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tx.title,
-                          style: GoogleFonts.manrope(
-                            color: AppColors.onSurface,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  child: Icon(
+                    tx.isIncome ? Icons.keyboard_arrow_down_rounded : Icons.keyboard_arrow_up_rounded,
+                    color: tx.isIncome ? AppColors.secondary : AppColors.tertiary,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tx.title,
+                        style: GoogleFonts.manrope(
+                          color: AppColors.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          tx.category,
-                          style: GoogleFonts.inter(
-                            color: AppColors.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        tx.category,
+                        style: GoogleFonts.inter(
+                          color: AppColors.onSurfaceVariant,
+                          fontSize: 12,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
-                    style: GoogleFonts.manrope(
-                      color: tx.isIncome
-                          ? AppColors.secondary
-                          : AppColors.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
+                      style: GoogleFonts.manrope(
+                        color: tx.isIncome ? AppColors.secondary : AppColors.onSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                    const SizedBox(height: 2),
+                    Text(
+                      DateFormat('MMM dd').format(tx.date),
+                      style: GoogleFonts.inter(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
       );
     });
   }
