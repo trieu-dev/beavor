@@ -21,8 +21,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     DashboardScreen(),
-    ExpenseAnalysisScreen(),
     const CalendarScreen(),
+    ExpenseAnalysisScreen(),
     const ProfileScreen(),
   ];
 
@@ -93,9 +93,9 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(Icons.grid_view_rounded, 0),
-                _buildNavItem(Icons.bar_chart_rounded, 1),
+                _buildNavItem(Icons.calendar_today_rounded, 1),
                 const SizedBox(width: 48), // Space for FAB
-                _buildNavItem(Icons.calendar_today_rounded, 2),
+                _buildNavItem(Icons.bar_chart_rounded, 2),
                 _buildNavItem(Icons.person_rounded, 3),
               ],
             ),
