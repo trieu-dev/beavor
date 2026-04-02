@@ -57,8 +57,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       Get.back();
       // Show snackbar
       Get.snackbar(
-        'Success',
-        'Transaction added successfully',
+        'success'.tr,
+        'add_tx_success'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.surfaceContainerHigh,
         colorText: AppColors.onSurface,
@@ -71,7 +71,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Transaction')),
+      appBar: AppBar(title: Text('add_tx_title'.tr)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -84,12 +84,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  prefixIcon: Icon(Icons.title),
+                decoration: InputDecoration(
+                  labelText: 'form_title'.tr,
+                  prefixIcon: const Icon(Icons.title),
                 ),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return 'Please enter a title';
+                  if (val == null || val.isEmpty) return 'form_error_title'.tr;
                   return null;
                 },
               ),
@@ -100,16 +100,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Amount (\$)',
-                  prefixIcon: Icon(Icons.attach_money),
+                decoration: InputDecoration(
+                  labelText: '${'form_amount'.tr} (\$)',
+                  prefixIcon: const Icon(Icons.attach_money),
                 ),
                 validator: (val) {
                   if (val == null || val.isEmpty) {
-                    return 'Please enter an amount';
+                    return 'form_error_amount'.tr;
                   }
                   if (double.tryParse(val) == null) {
-                    return 'Invalid number format';
+                    return 'form_error_format'.tr;
                   }
                   return null;
                 },
@@ -118,9 +118,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               TextFormField(
                 controller: _categoryController,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  prefixIcon: Icon(Icons.category_outlined),
+                decoration: InputDecoration(
+                  labelText: 'form_category'.tr,
+                  prefixIcon: const Icon(Icons.category_outlined),
                 ),
               ),
               const SizedBox(height: 24),
@@ -179,7 +179,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
                 child: ElevatedButton(
                   onPressed: _submit,
-                  child: const Text('Save Transaction'),
+                  child: Text('add_tx_save'.tr),
                 ),
               ),
             ],
@@ -212,7 +212,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    'Expense',
+                    'add_tx_expense'.tr,
                     style: GoogleFonts.inter(
                       color: !_isIncome
                           ? AppColors.tertiary
@@ -238,7 +238,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    'Income',
+                    'add_tx_income'.tr,
                     style: GoogleFonts.inter(
                       color: _isIncome
                           ? AppColors.secondary

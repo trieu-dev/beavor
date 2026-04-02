@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -107,7 +106,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Spending Analysis',
+                    'analysis_title'.tr,
                     style: GoogleFonts.manrope(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -142,7 +141,12 @@ class ExpenseAnalysisScreen extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: ['Weekly', 'Monthly'].map((timeframe) {
+        children: {
+          'Weekly': 'analysis_weekly'.tr,
+          'Monthly': 'analysis_monthly'.tr,
+        }.entries.map((entry) {
+          final timeframe = entry.key;
+          final label = entry.value;
           final isSelected = controller.selectedTimeframe.value == timeframe;
           return GestureDetector(
             onTap: () => controller.setTimeframe(timeframe),
@@ -161,7 +165,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
                 ] : [],
               ),
               child: Text(
-                timeframe,
+                label,
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -198,14 +202,14 @@ class ExpenseAnalysisScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Top Category',
+                  'analysis_top_category'.tr,
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
                 Text(
-                  data.entries.first.key,
+                  data.entries.first.key.tr,
                   style: GoogleFonts.manrope(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -225,7 +229,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Spending Trend',
+          'analysis_trend'.tr,
           style: GoogleFonts.manrope(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -285,7 +289,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Detailed Breakdown',
+          'analysis_breakdown'.tr,
           style: GoogleFonts.manrope(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -317,7 +321,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      entry.key,
+                      entry.key.tr,
                       style: GoogleFonts.manrope(
                         fontWeight: FontWeight.w700,
                         color: AppColors.onSurface,
@@ -376,7 +380,7 @@ class ExpenseAnalysisScreen extends StatelessWidget {
             Icon(Icons.analytics_outlined, size: 64, color: AppColors.onSurfaceVariant.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             Text(
-              'No data for the selected period',
+              'empty_data'.tr,
               style: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
             ),
           ],
