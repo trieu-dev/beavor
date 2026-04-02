@@ -402,7 +402,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        tx.category,
+                        tx.category.tr,
                         style: GoogleFonts.inter(
                           color: AppColors.onSurfaceVariant,
                           fontSize: 12,

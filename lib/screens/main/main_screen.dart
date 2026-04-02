@@ -92,11 +92,11 @@ class _MainScreenState extends State<MainScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(Icons.grid_view_rounded, 0),
-                _buildNavItem(Icons.calendar_today_rounded, 1),
+                _buildNavItem(Icons.grid_view_rounded, 0, 'nav_home'.tr),
+                _buildNavItem(Icons.calendar_today_rounded, 1, 'nav_calendar'.tr),
                 const SizedBox(width: 48), // Space for FAB
-                _buildNavItem(Icons.bar_chart_rounded, 2),
-                _buildNavItem(Icons.person_rounded, 3),
+                _buildNavItem(Icons.bar_chart_rounded, 2, 'nav_analysis'.tr),
+                _buildNavItem(Icons.person_rounded, 3, 'nav_profile'.tr),
               ],
             ),
           ),
@@ -105,40 +105,43 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, int index) {
+  Widget _buildNavItem(IconData icon, int index, String label) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
-              size: 26,
-            ),
-          ),
-          if (isSelected)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              height: 4,
-              width: 4,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
+      child: Tooltip(
+        message: label,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
               ),
-            )
-          else
-            const SizedBox(height: 8),
-        ],
+              child: Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                size: 26,
+              ),
+            ),
+            if (isSelected)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                height: 4,
+                width: 4,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+              )
+            else
+              const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

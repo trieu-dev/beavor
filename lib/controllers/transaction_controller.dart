@@ -27,7 +27,7 @@ class TransactionController extends GetxController {
         amount: 5200.0,
         date: now.subtract(const Duration(days: 1)),
         isIncome: true,
-        category: 'Income',
+        category: 'cat_income',
       ),
       TransactionModel(
         id: '2',
@@ -35,7 +35,7 @@ class TransactionController extends GetxController {
         amount: 145.50,
         date: now.subtract(const Duration(days: 1)),
         isIncome: false,
-        category: 'Groceries',
+        category: 'cat_groceries',
       ),
       TransactionModel(
         id: '3',
@@ -43,7 +43,7 @@ class TransactionController extends GetxController {
         amount: 15.99,
         date: now.subtract(const Duration(days: 2)),
         isIncome: false,
-        category: 'Entertainment',
+        category: 'cat_entertainment',
       ),
       TransactionModel(
         id: '4',
@@ -51,7 +51,7 @@ class TransactionController extends GetxController {
         amount: 850.0,
         date: now.subtract(const Duration(days: 3)),
         isIncome: true,
-        category: 'Income',
+        category: 'cat_income',
       ),
       TransactionModel(
         id: '5',
@@ -59,7 +59,7 @@ class TransactionController extends GetxController {
         amount: 24.0,
         date: now.subtract(const Duration(days: 3)),
         isIncome: false,
-        category: 'Transport',
+        category: 'cat_transport',
       ),
       TransactionModel(
         id: '6',
@@ -67,7 +67,7 @@ class TransactionController extends GetxController {
         amount: 320.0,
         date: now.subtract(const Duration(days: 4)),
         isIncome: false,
-        category: 'Shopping',
+        category: 'cat_shopping',
       ),
       TransactionModel(
         id: '7',
@@ -75,7 +75,7 @@ class TransactionController extends GetxController {
         amount: 6.50,
         date: now.subtract(const Duration(days: 5)),
         isIncome: false,
-        category: 'Food',
+        category: 'cat_food',
       ),
       TransactionModel(
         id: '8',
@@ -83,7 +83,7 @@ class TransactionController extends GetxController {
         amount: 1800.0,
         date: now.subtract(const Duration(days: 10)),
         isIncome: false,
-        category: 'Bills',
+        category: 'cat_bills',
       ),
       TransactionModel(
         id: '9',
@@ -91,7 +91,7 @@ class TransactionController extends GetxController {
         amount: 50.0,
         date: now.subtract(const Duration(days: 12)),
         isIncome: false,
-        category: 'Health',
+        category: 'cat_health',
       ),
     ]);
   }

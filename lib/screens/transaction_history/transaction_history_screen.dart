@@ -15,13 +15,13 @@ class TransactionHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transaction History'),
+        title: Text('history_title'.tr),
       ),
       body: Obx(() {
         if (controller.transactions.isEmpty) {
           return Center(
             child: Text(
-              'No transactions yet.',
+              'history_empty'.tr,
               style: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
             ),
           );
@@ -73,7 +73,7 @@ class TransactionHistoryScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${tx.category} • ${DateFormat.yMd().format(tx.date)}',
+                          '${tx.category.tr} • ${DateFormat.yMd().format(tx.date)}',
                           style: GoogleFonts.inter(
                             color: AppColors.onSurfaceVariant,
                             fontSize: 12,

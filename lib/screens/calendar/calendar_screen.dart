@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../models/transaction_model.dart';
 import 'calendar_controller.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -48,7 +49,7 @@ class CalendarScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Financial Calendar',
+            'nav_calendar'.tr,
             style: GoogleFonts.manrope(
               fontSize: 28,
               fontWeight: FontWeight.w800,
@@ -198,7 +199,7 @@ class CalendarScreen extends StatelessWidget {
             children: [
               Obx(() => Text(
                 controller.isSameDay(controller.selectedDay.value, DateTime.now()) 
-                  ? 'Today\'s Agenda' 
+                  ? 'calendar_agenda'.tr 
                   : DateFormat('MMMM d, yyyy').format(controller.selectedDay.value!),
                 style: GoogleFonts.manrope(
                   fontSize: 20,
@@ -207,7 +208,7 @@ class CalendarScreen extends StatelessWidget {
                 ),
               )),
               Text(
-                'See all',
+                'see_all'.tr,
                 style: GoogleFonts.inter(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
@@ -224,7 +225,7 @@ class CalendarScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: Text(
-                  'No records for this day',
+                  'calendar_no_transactions'.tr,
                   style: GoogleFonts.inter(color: AppColors.onSurfaceVariant.withValues(alpha: 0.5)),
                 ),
               ),
@@ -256,9 +257,9 @@ class CalendarScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildSummaryBox('Income', controller.dailyIncome, AppColors.secondary),
+          _buildSummaryBox('income'.tr, controller.dailyIncome, AppColors.secondary),
           Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.05), margin: const EdgeInsets.symmetric(horizontal: 20)),
-          _buildSummaryBox('Expense', controller.dailyExpense, AppColors.error),
+          _buildSummaryBox('expenses'.tr, controller.dailyExpense, AppColors.error),
         ],
       ),
     );
@@ -291,7 +292,7 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(dynamic tx) {
+  Widget _buildTransactionItem(TransactionModel tx) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -329,7 +330,7 @@ class CalendarScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  tx.category,
+                  tx.category.tr,
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
