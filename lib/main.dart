@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
-import 'core/localization/app_translations.dart';
+import 'core/i18n/app_translations.dart';
 import 'screens/main/main_screen.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class LuminousLedgerApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Luminous Ledger',
       translations: AppTranslations(),
-      locale: Get.deviceLocale, // Get device locale
+      locale: const Locale('vi', 'VN'), // Default to Vietnamese
       fallbackLocale: const Locale('en', 'US'), // English as fallback
       // fallbackLocale: const Locale('vi', 'VN'), // Vietnamese as fallback
       localizationsDelegates: const [
