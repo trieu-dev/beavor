@@ -16,7 +16,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Let underlying gradients show if any
+      backgroundColor: Colors.transparent, 
       appBar: AppBar(
         title: Text(
           'app_title'.tr,
@@ -83,15 +83,15 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildWealthCard(BuildContext context) {
     final currencyFormatter = NumberFormat.currency(
-      symbol: '\$',
-      decimalDigits: 2,
+      locale: 'vi_VN',
+      symbol: '₫',
+      decimalDigits: 0,
     );
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(32),
       child: Stack(
         children: [
-          // Mesh Gradient Background
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
@@ -103,7 +103,6 @@ class DashboardScreen extends StatelessWidget {
                 child: Container(decoration: BoxDecoration(gradient: g)),
               )),
           
-          // Content
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(32),
@@ -140,7 +139,7 @@ class DashboardScreen extends StatelessWidget {
                           const Icon(Icons.trending_up, size: 14, color: AppColors.secondary),
                           const SizedBox(width: 4),
                           Text(
-                            '+2.4%',
+                            '+0%', // Static for now, can be computed later
                             style: GoogleFonts.inter(
                               color: AppColors.secondary,
                               fontSize: 12,
@@ -154,13 +153,16 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Obx(
-                  () => Text(
-                    currencyFormatter.format(controller.totalBalance),
-                    style: GoogleFonts.manrope(
-                      color: AppColors.onSurface,
-                      fontSize: 48,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.5,
+                  () => FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      currencyFormatter.format(controller.totalBalance),
+                      style: GoogleFonts.manrope(
+                        color: AppColors.onSurface,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -1.0,
+                      ),
                     ),
                   ),
                 ),
@@ -168,12 +170,12 @@ class DashboardScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildTrendInfo(
+                      child: Obx(() => _buildTrendInfo(
                         'income'.tr,
-                        '\$${controller.totalIncome.toStringAsFixed(2)}',
+                        currencyFormatter.format(controller.totalIncome),
                         AppColors.secondary,
                         Icons.arrow_downward_rounded,
-                      ),
+                      )),
                     ),
                     Container(
                       height: 40,
@@ -181,12 +183,12 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.1),
                     ),
                     Expanded(
-                      child: _buildTrendInfo(
+                      child: Obx(() => _buildTrendInfo(
                         'expenses'.tr,
-                        '\$${controller.totalExpense.toStringAsFixed(2)}',
+                        currencyFormatter.format(controller.totalExpense),
                         AppColors.tertiary,
                         Icons.arrow_upward_rounded,
-                      ),
+                      )),
                     ),
                   ],
                 ),
@@ -219,12 +221,15 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            amount,
-            style: GoogleFonts.manrope(
-              color: AppColors.onSurface,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              amount,
+              style: GoogleFonts.manrope(
+                color: AppColors.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -326,8 +331,9 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildRecentTransactionsList() {
     final currencyFormatter = NumberFormat.currency(
-      symbol: '\$',
-      decimalDigits: 2,
+      locale: 'vi_VN',
+      symbol: '₫',
+      decimalDigits: 0,
     );
 
     return Obx(() {
@@ -353,13 +359,17 @@ class DashboardScreen extends StatelessWidget {
         );
       }
 
+      final recent = controller.transactions.take(5).toList();
+
       return ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: controller.transactions.length > 5 ? 5 : controller.transactions.length,
+        itemCount: recent.length,
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
-          final tx = controller.transactions[index];
+          final tx = recent[index];
+          final category = controller.getCategoryById(tx.categoryId);
+
           return Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -376,14 +386,12 @@ class DashboardScreen extends StatelessWidget {
                   height: 48,
                   width: 48,
                   decoration: BoxDecoration(
-                    color: tx.isIncome
-                        ? AppColors.secondary.withValues(alpha: 0.1)
-                        : AppColors.tertiary.withValues(alpha: 0.1),
+                    color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
                     tx.isIncome ? Icons.keyboard_arrow_down_rounded : Icons.keyboard_arrow_up_rounded,
-                    color: tx.isIncome ? AppColors.secondary : AppColors.tertiary,
+                    color: Color(category?.colorValue ?? 0xFF6366F1),
                     size: 24,
                   ),
                 ),
@@ -399,10 +407,12 @@ class DashboardScreen extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        tx.category.tr,
+                        category?.name ?? 'General',
                         style: GoogleFonts.inter(
                           color: AppColors.onSurfaceVariant,
                           fontSize: 12,
@@ -426,7 +436,7 @@ class DashboardScreen extends StatelessWidget {
                     Text(
                       DateFormat('MMM dd').format(tx.date),
                       style: GoogleFonts.inter(
-                        color: AppColors.onSurfaceVariant,
+                        color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
                         fontSize: 11,
                       ),
                     ),

@@ -2,10 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../../models/transaction_model.dart';
+import '../../core/utils/icon_mapper.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -20,12 +22,24 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
 
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
+  String? _selectedCategoryId;
+  String? _selectedWalletId;
 
-  // Simple ID generator using timestamp
+  @override
+  void initState() {
+    super.initState();
+    // Default selections
+    if (controller.categories.isNotEmpty) {
+      _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome == _isIncome, orElse: () => controller.categories.first).id;
+    }
+    if (controller.wallets.isNotEmpty) {
+      _selectedWalletId = controller.wallets.first.id;
+    }
+  }
+
   String generateId() {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
@@ -34,12 +48,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      if (_selectedCategoryId == null || _selectedWalletId == null) {
+        Get.snackbar('Error', 'Please select a category and a wallet', 
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+        return;
+      }
+
       final double amount = double.tryParse(_amountController.text) ?? 0.0;
 
       final transaction = TransactionModel(
@@ -48,9 +67,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         amount: amount,
         date: _selectedDate,
         isIncome: _isIncome,
-        category: _categoryController.text.isEmpty
-            ? 'General'
-            : _categoryController.text,
+        categoryId: _selectedCategoryId!,
+        walletId: _selectedWalletId!,
+        note: '',
       );
 
       controller.addTransaction(transaction);
@@ -101,22 +120,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 100,
-            left: -50,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.secondary.withValues(alpha: 0.1),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: Container(color: Colors.transparent),
-              ),
-            ),
-          ),
 
           SafeArea(
             child: SingleChildScrollView(
@@ -140,23 +143,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                     _buildGlassInput(
                       controller: _amountController,
-                      label: '${'form_amount'.tr} (\$)',
-                      icon: Icons.attach_money_rounded,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      label: '${'form_amount'.tr} (₫)',
+                      icon: Icons.payments_rounded,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: false),
                       validator: (val) {
                         if (val == null || val.isEmpty) return 'form_error_amount'.tr;
                         if (double.tryParse(val) == null) return 'form_error_format'.tr;
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
-                    _buildGlassInput(
-                      controller: _categoryController,
-                      label: 'form_category'.tr,
-                      icon: Icons.category_rounded,
-                    ),
-                    const SizedBox(height: 20),
+                    _buildSectionLabel('form_category'.tr),
+                    const SizedBox(height: 12),
+                    _buildCategoryPicker(),
+                    const SizedBox(height: 24),
+
+                    _buildSectionLabel('wallets'.tr),
+                    const SizedBox(height: 12),
+                    _buildWalletPicker(),
+                    const SizedBox(height: 24),
 
                     _buildDatePickerTile(),
                     
@@ -174,6 +180,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Widget _buildSectionLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Text(
+        label,
+        style: GoogleFonts.manrope(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+        ),
+      ),
+    );
+  }
+
   Widget _buildGlassInput({
     required TextEditingController controller,
     required String label,
@@ -184,17 +204,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(
-            label,
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
+        _buildSectionLabel(label),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: AppColors.surfaceContainerLow.withValues(alpha: 0.4),
@@ -214,7 +225,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   prefixIcon: Icon(icon, color: AppColors.primary.withValues(alpha: 0.7)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                  errorStyle: const TextStyle(height: 0), // Use snackbar or custom error UI for cleaner look
+                  errorStyle: const TextStyle(height: 0),
                 ),
               ),
             ),
@@ -224,21 +235,120 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Widget _buildCategoryPicker() {
+    final filteredCategories = controller.categories.where((c) => c.isIncome == _isIncome).toList();
+    
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: filteredCategories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final cat = filteredCategories[index];
+          final isSelected = _selectedCategoryId == cat.id;
+          
+          return GestureDetector(
+            onTap: () => setState(() => _selectedCategoryId = cat.id),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 80,
+              decoration: BoxDecoration(
+                color: isSelected 
+                  ? Color(cat.colorValue).withValues(alpha: 0.2) 
+                  : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected 
+                    ? Color(cat.colorValue) 
+                    : Colors.white.withValues(alpha: 0.05),
+                  width: 2,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    IconMapper.getIconData(cat.icon),
+                    color: isSelected ? Color(cat.colorValue) : AppColors.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    cat.name.tr,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWalletPicker() {
+    return SizedBox(
+      height: 60,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: controller.wallets.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final wallet = controller.wallets[index];
+          final isSelected = _selectedWalletId == wallet.id;
+          
+          return GestureDetector(
+            onTap: () => setState(() => _selectedWalletId = wallet.id),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: isSelected 
+                  ? Color(wallet.colorValue).withValues(alpha: 0.2) 
+                  : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected 
+                    ? Color(wallet.colorValue) 
+                    : Colors.white.withValues(alpha: 0.05),
+                  width: 2,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    IconMapper.getIconData(wallet.icon),
+                    size: 18,
+                    color: isSelected ? Color(wallet.colorValue) : AppColors.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    wallet.name,
+                    style: GoogleFonts.manrope(
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildDatePickerTile() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(
-            'form_date'.tr, // Assuming this key exists, let's just use "Date" logic if not
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
+        _buildSectionLabel('form_date'.tr),
+        const SizedBox(height: 8),
         GestureDetector(
           onTap: () async {
             final picked = await showDatePicker(
@@ -246,19 +356,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               initialDate: _selectedDate,
               firstDate: DateTime(2000),
               lastDate: DateTime(2100),
-              builder: (context, child) {
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: const ColorScheme.dark(
-                      primary: AppColors.primary,
-                      onPrimary: Colors.white,
-                      surface: AppColors.surfaceContainerHigh,
-                      onSurface: Colors.white,
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
             );
             if (picked != null) setState(() => _selectedDate = picked);
           },
@@ -274,7 +371,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 Icon(Icons.calendar_today_rounded, color: AppColors.primary.withValues(alpha: 0.7)),
                 const SizedBox(width: 12),
                 Text(
-                  '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                  DateFormat('dd/MM/yyyy').format(_selectedDate),
                   style: GoogleFonts.inter(color: AppColors.onSurface, fontSize: 16),
                 ),
               ],
@@ -332,13 +429,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             label: 'add_tx_expense'.tr,
             isSelected: !_isIncome,
             activeColor: AppColors.tertiary,
-            onTap: () => setState(() => _isIncome = false),
+            onTap: () {
+              setState(() {
+                _isIncome = false;
+                // Re-select first expense category
+                _selectedCategoryId = controller.categories.firstWhere((c) => !c.isIncome).id;
+              });
+            },
           ),
           _buildToggleItem(
             label: 'add_tx_income'.tr,
             isSelected: _isIncome,
             activeColor: AppColors.secondary,
-            onTap: () => setState(() => _isIncome = true),
+            onTap: () {
+              setState(() {
+                _isIncome = true;
+                // Re-select first income category
+                _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome).id;
+              });
+            },
           ),
         ],
       ),

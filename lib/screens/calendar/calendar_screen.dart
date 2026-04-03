@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../models/transaction_model.dart';
+import '../../controllers/transaction_controller.dart';
+import '../../core/utils/icon_mapper.dart';
 import 'calendar_controller.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -15,6 +17,7 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CalendarController());
+    final txController = Get.find<TransactionController>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -28,9 +31,9 @@ class CalendarScreen extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    _buildCalendarCard(controller),
+                    _buildCalendarCard(controller, txController),
                     const SizedBox(height: 24),
-                    _buildAgendaSection(controller),
+                    _buildAgendaSection(controller, txController),
                     const SizedBox(height: 100), // Space for bottom bar
                   ],
                 ),
@@ -44,7 +47,7 @@ class CalendarScreen extends StatelessWidget {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -71,7 +74,7 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCalendarCard(CalendarController controller) {
+  Widget _buildCalendarCard(CalendarController controller, TransactionController txController) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -135,45 +138,36 @@ class CalendarScreen extends StatelessWidget {
                     ),
                   );
                 },
-                todayBuilder: (context, day, focusedDay) {
-                  return Container(
-                    margin: const EdgeInsets.all(6),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${day.day}',
-                      style: GoogleFonts.inter(color: AppColors.primary, fontWeight: FontWeight.bold),
-                    ),
-                  );
-                },
                 markerBuilder: (context, date, events) {
-                  // Premium marker: pulsing dots for transactions
-                  if (date.day % 3 == 0) { // Selective mock markers
+                  final transactions = txController.transactions.where((t) => controller.isSameDay(t.date, date)).toList();
+                  if (transactions.isNotEmpty) {
+                    final hasIncome = transactions.any((t) => t.isIncome);
+                    final hasExpense = transactions.any((t) => !t.isIncome);
+                    
                     return Positioned(
                       bottom: 8,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            width: 5,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                              color: AppColors.secondary,
-                              shape: BoxShape.circle,
+                          if (hasIncome)
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: const BoxDecoration(
+                                color: AppColors.secondary,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 2),
-                          Container(
-                            width: 5,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                              color: AppColors.error,
-                              shape: BoxShape.circle,
+                          if (hasIncome && hasExpense) const SizedBox(width: 2),
+                          if (hasExpense)
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: const BoxDecoration(
+                                color: AppColors.tertiary,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     );
@@ -188,7 +182,7 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAgendaSection(CalendarController controller) {
+  Widget _buildAgendaSection(CalendarController controller, TransactionController txController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -238,7 +232,7 @@ class CalendarScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             itemBuilder: (context, index) {
               final tx = controller.dailyTransactions[index];
-              return _buildTransactionItem(tx);
+              return _buildTransactionItem(tx, txController);
             },
           );
         }),
@@ -247,6 +241,8 @@ class CalendarScreen extends StatelessWidget {
   }
 
   Widget _buildDailySummaryCard(CalendarController controller) {
+    final currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(20),
@@ -257,15 +253,15 @@ class CalendarScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildSummaryBox('income'.tr, controller.dailyIncome, AppColors.secondary),
+          _buildSummaryBox('income'.tr, currencyFormatter.format(controller.dailyIncome), AppColors.secondary),
           Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.05), margin: const EdgeInsets.symmetric(horizontal: 20)),
-          _buildSummaryBox('expenses'.tr, controller.dailyExpense, AppColors.error),
+          _buildSummaryBox('expenses'.tr, currencyFormatter.format(controller.dailyExpense), AppColors.tertiary),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryBox(String label, double amount, Color color) {
+  Widget _buildSummaryBox(String label, String amount, Color color) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,12 +275,15 @@ class CalendarScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: GoogleFonts.manrope(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: color,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              amount,
+              style: GoogleFonts.manrope(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
             ),
           ),
         ],
@@ -292,7 +291,10 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(TransactionModel tx) {
+  Widget _buildTransactionItem(TransactionModel tx, TransactionController txController) {
+    final category = txController.getCategoryById(tx.categoryId);
+    final currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -306,14 +308,12 @@ class CalendarScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: !tx.isIncome 
-                  ? AppColors.error.withValues(alpha: 0.1) 
-                  : AppColors.secondary.withValues(alpha: 0.1),
+              color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              !tx.isIncome ? Icons.arrow_outward_rounded : Icons.south_west_rounded,
-              color: !tx.isIncome ? AppColors.error : AppColors.secondary,
+              IconMapper.getIconData(category?.icon ?? 'category'),
+              color: Color(category?.colorValue ?? 0xFF6366F1),
               size: 20,
             ),
           ),
@@ -330,7 +330,7 @@ class CalendarScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  tx.category.tr,
+                  category?.name ?? 'General',
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
@@ -340,10 +340,10 @@ class CalendarScreen extends StatelessWidget {
             ),
           ),
           Text(
-            '${!tx.isIncome ? '-' : '+'}\$${tx.amount.toStringAsFixed(2)}',
+            '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
             style: GoogleFonts.manrope(
               fontWeight: FontWeight.w800,
-              color: !tx.isIncome ? AppColors.error : AppColors.secondary,
+              color: tx.isIncome ? AppColors.secondary : AppColors.onSurface,
             ),
           ),
         ],
