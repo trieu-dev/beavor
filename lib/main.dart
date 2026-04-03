@@ -4,9 +4,12 @@ import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/i18n/app_translations.dart';
+import 'core/services/hive_service.dart';
 import 'screens/main/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HiveService.init();
   runApp(const LuminousLedgerApp());
 }
 

@@ -1,16 +1,21 @@
 import 'package:get/get.dart';
 import '../../models/transaction_model.dart';
+import '../../controllers/transaction_controller.dart';
 
 class CalendarController extends GetxController {
+  final TransactionController transactionController = Get.find<TransactionController>();
+
   final Rx<DateTime> focusedDay = DateTime.now().obs;
   final Rx<DateTime?> selectedDay = DateTime.now().obs;
   
-  // Mock data for transactions
+  // Real transactions from the main controller
   final RxList<TransactionModel> dailyTransactions = <TransactionModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
+    // Listen to changes in the main transactions list
+    ever(transactionController.transactions, (_) => _fetchTransactionsForDay(selectedDay.value ?? DateTime.now()));
     _fetchTransactionsForDay(DateTime.now());
   }
 
@@ -23,36 +28,8 @@ class CalendarController extends GetxController {
   }
 
   void _fetchTransactionsForDay(DateTime date) {
-    // Mocking transaction fetch based on date
-    final mockData = [
-      TransactionModel(
-        id: '1',
-        title: 'Coffee',
-        amount: 4.50,
-        date: date,
-        category: 'Food',
-        isIncome: false,
-      ),
-      TransactionModel(
-        id: '2',
-        title: 'Salary Deposit',
-        amount: 2500.00,
-        date: date,
-        category: 'Income',
-        isIncome: true,
-      ),
-      if (date.day % 2 == 0)
-        TransactionModel(
-          id: '3',
-          title: 'Internet Bill',
-          amount: 60.00,
-          date: date,
-          category: 'Bills',
-          isIncome: false,
-        ),
-    ];
-    
-    dailyTransactions.value = mockData;
+    final dayTransactions = transactionController.transactions.where((t) => isSameDay(t.date, date)).toList();
+    dailyTransactions.assignAll(dayTransactions);
   }
 
   bool isSameDay(DateTime? a, DateTime? b) {

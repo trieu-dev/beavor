@@ -1,9 +1,19 @@
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/transaction_model.dart';
+import '../models/wallet_model.dart';
+import '../models/category_model.dart';
+import '../core/services/hive_service.dart';
 
 class TransactionController extends GetxController {
-  // Observable list of transactions
+  late Box<TransactionModel> _transactionBox;
+  late Box<WalletModel> _walletBox;
+  late Box<CategoryModel> _categoryBox;
+
+  // Observables
   var transactions = <TransactionModel>[].obs;
+  var wallets = <WalletModel>[].obs;
+  var categories = <CategoryModel>[].obs;
   
   // Selected Timeframe for Analysis
   var selectedTimeframe = 'Weekly'.obs;
@@ -11,89 +21,30 @@ class TransactionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadDummyData();
+    _initBoxes();
+  }
+
+  Future<void> _initBoxes() async {
+    _transactionBox = Hive.box<TransactionModel>(HiveService.transactionsBoxName);
+    _walletBox = Hive.box<WalletModel>(HiveService.walletsBoxName);
+    _categoryBox = Hive.box<CategoryModel>(HiveService.categoriesBoxName);
+    
+    loadData();
+  }
+
+  void loadData() {
+    // Load Transactions sorted by date
+    final allTransactions = _transactionBox.values.toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+    transactions.assignAll(allTransactions);
+
+    // Load Wallets and Categories
+    wallets.assignAll(_walletBox.values.toList());
+    categories.assignAll(_categoryBox.values.toList());
   }
 
   void setTimeframe(String timeframe) {
     selectedTimeframe.value = timeframe;
-  }
-
-  void _loadDummyData() {
-    final now = DateTime.now();
-    transactions.assignAll([
-      TransactionModel(
-        id: '1',
-        title: 'Salary Deposit',
-        amount: 5200.0,
-        date: now.subtract(const Duration(days: 1)),
-        isIncome: true,
-        category: 'cat_income',
-      ),
-      TransactionModel(
-        id: '2',
-        title: 'Whole Foods Market',
-        amount: 145.50,
-        date: now.subtract(const Duration(days: 1)),
-        isIncome: false,
-        category: 'cat_groceries',
-      ),
-      TransactionModel(
-        id: '3',
-        title: 'Netflix Subscription',
-        amount: 15.99,
-        date: now.subtract(const Duration(days: 2)),
-        isIncome: false,
-        category: 'cat_entertainment',
-      ),
-      TransactionModel(
-        id: '4',
-        title: 'Freelance Design',
-        amount: 850.0,
-        date: now.subtract(const Duration(days: 3)),
-        isIncome: true,
-        category: 'cat_income',
-      ),
-      TransactionModel(
-        id: '5',
-        title: 'Uber Ride',
-        amount: 24.0,
-        date: now.subtract(const Duration(days: 3)),
-        isIncome: false,
-        category: 'cat_transport',
-      ),
-      TransactionModel(
-        id: '6',
-        title: 'Amazon Shopping',
-        amount: 320.0,
-        date: now.subtract(const Duration(days: 4)),
-        isIncome: false,
-        category: 'cat_shopping',
-      ),
-      TransactionModel(
-        id: '7',
-        title: 'Starbucks',
-        amount: 6.50,
-        date: now.subtract(const Duration(days: 5)),
-        isIncome: false,
-        category: 'cat_food',
-      ),
-      TransactionModel(
-        id: '8',
-        title: 'Rent Payment',
-        amount: 1800.0,
-        date: now.subtract(const Duration(days: 10)),
-        isIncome: false,
-        category: 'cat_bills',
-      ),
-      TransactionModel(
-        id: '9',
-        title: 'Gym Membership',
-        amount: 50.0,
-        date: now.subtract(const Duration(days: 12)),
-        isIncome: false,
-        category: 'cat_health',
-      ),
-    ]);
   }
 
   List<TransactionModel> get filteredTransactions {
@@ -106,15 +57,9 @@ class TransactionController extends GetxController {
     return transactions;
   }
 
-  // Computed property: Total Balance
+  // Computed property: Total Balance (Across all wallets)
   double get totalBalance {
-    return transactions.fold(0.0, (sum, item) {
-      if (item.isIncome) {
-        return sum + item.amount;
-      } else {
-        return sum - item.amount;
-      }
-    });
+    return wallets.fold(0.0, (sum, wallet) => sum + wallet.balance);
   }
 
   // Computed property: Total Income
@@ -137,8 +82,35 @@ class TransactionController extends GetxController {
         .fold(0.0, (sum, item) => sum + item.amount);
   }
 
-  void addTransaction(TransactionModel transaction) {
-    transactions.add(transaction);
-    transactions.sort((a, b) => b.date.compareTo(a.date));
+  Future<void> addTransaction(TransactionModel transaction) async {
+    await _transactionBox.put(transaction.id, transaction);
+    
+    // Update Wallet Balance
+    final wallet = _walletBox.get(transaction.walletId);
+    if (wallet != null) {
+      final newBalance = transaction.isIncome 
+          ? wallet.balance + transaction.amount 
+          : wallet.balance - transaction.amount;
+      
+      final updatedWallet = WalletModel(
+        id: wallet.id,
+        name: wallet.name,
+        balance: newBalance,
+        colorValue: wallet.colorValue,
+        icon: wallet.icon,
+        type: wallet.type,
+      );
+      await _walletBox.put(wallet.id, updatedWallet);
+    }
+
+    loadData(); // Refresh UI observables
+  }
+
+  CategoryModel? getCategoryById(String id) {
+    return _categoryBox.get(id);
+  }
+
+  WalletModel? getWalletById(String id) {
+    return _walletBox.get(id);
   }
 }
