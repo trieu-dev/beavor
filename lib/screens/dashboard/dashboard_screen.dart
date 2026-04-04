@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
+import '../../widgets/empty_transaction_state.dart';
 
 class DashboardScreen extends StatelessWidget {
   DashboardScreen({super.key});
@@ -16,7 +17,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, 
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           'app_title'.tr,
@@ -94,15 +95,15 @@ class DashboardScreen extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF0F172A),
-              ),
+              decoration: const BoxDecoration(color: Color(0xFF0F172A)),
             ),
           ),
-          ...AppColors.wealthCardMesh.map((g) => Positioned.fill(
-                child: Container(decoration: BoxDecoration(gradient: g)),
-              )),
-          
+          ...AppColors.wealthCardMesh.map(
+            (g) => Positioned.fill(
+              child: Container(decoration: BoxDecoration(gradient: g)),
+            ),
+          ),
+
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(32),
@@ -129,14 +130,21 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.trending_up, size: 14, color: AppColors.secondary),
+                          const Icon(
+                            Icons.trending_up,
+                            size: 14,
+                            color: AppColors.secondary,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             '+0%', // Static for now, can be computed later
@@ -170,12 +178,14 @@ class DashboardScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Obx(() => _buildTrendInfo(
-                        'income'.tr,
-                        currencyFormatter.format(controller.totalIncome),
-                        AppColors.secondary,
-                        Icons.arrow_downward_rounded,
-                      )),
+                      child: Obx(
+                        () => _buildTrendInfo(
+                          'income'.tr,
+                          currencyFormatter.format(controller.totalIncome),
+                          AppColors.secondary,
+                          Icons.arrow_downward_rounded,
+                        ),
+                      ),
                     ),
                     Container(
                       height: 40,
@@ -183,12 +193,14 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.1),
                     ),
                     Expanded(
-                      child: Obx(() => _buildTrendInfo(
-                        'expenses'.tr,
-                        currencyFormatter.format(controller.totalExpense),
-                        AppColors.tertiary,
-                        Icons.arrow_upward_rounded,
-                      )),
+                      child: Obx(
+                        () => _buildTrendInfo(
+                          'expenses'.tr,
+                          currencyFormatter.format(controller.totalExpense),
+                          AppColors.tertiary,
+                          Icons.arrow_upward_rounded,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -200,7 +212,12 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendInfo(String label, String amount, Color color, IconData icon) {
+  Widget _buildTrendInfo(
+    String label,
+    String amount,
+    Color color,
+    IconData icon,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -256,11 +273,7 @@ class DashboardScreen extends StatelessWidget {
           'wallets'.tr,
           () {},
         ),
-        _buildActionItem(
-          Icons.more_horiz_rounded,
-          'more'.tr,
-          () {},
-        ),
+        _buildActionItem(Icons.more_horiz_rounded, 'more'.tr, () {}),
       ],
     );
   }
@@ -321,7 +334,11 @@ class DashboardScreen extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.primary),
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: AppColors.primary,
+              ),
             ],
           ),
         ),
@@ -338,25 +355,7 @@ class DashboardScreen extends StatelessWidget {
 
     return Obx(() {
       if (controller.transactions.isEmpty) {
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 40),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
-          ),
-          child: Column(
-            children: [
-              Icon(Icons.inbox_outlined, size: 48, color: AppColors.onSurfaceVariant.withValues(alpha: 0.3)),
-              const SizedBox(height: 12),
-              Text(
-                'no_recent_transactions'.tr,
-                style: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
-              ),
-            ],
-          ),
-        );
+        return const EmptyTransactionState();
       }
 
       final recent = controller.transactions.take(5).toList();
@@ -386,11 +385,15 @@ class DashboardScreen extends StatelessWidget {
                   height: 48,
                   width: 48,
                   decoration: BoxDecoration(
-                    color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.1),
+                    color: Color(
+                      category?.colorValue ?? 0xFF6366F1,
+                    ).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
-                    tx.isIncome ? Icons.keyboard_arrow_down_rounded : Icons.keyboard_arrow_up_rounded,
+                    tx.isIncome
+                        ? Icons.keyboard_arrow_down_rounded
+                        : Icons.keyboard_arrow_up_rounded,
                     color: Color(category?.colorValue ?? 0xFF6366F1),
                     size: 24,
                   ),
@@ -427,7 +430,9 @@ class DashboardScreen extends StatelessWidget {
                     Text(
                       '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
                       style: GoogleFonts.manrope(
-                        color: tx.isIncome ? AppColors.secondary : AppColors.onSurface,
+                        color: tx.isIncome
+                            ? AppColors.secondary
+                            : AppColors.onSurface,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -436,7 +441,9 @@ class DashboardScreen extends StatelessWidget {
                     Text(
                       DateFormat('MMM dd').format(tx.date),
                       style: GoogleFonts.inter(
-                        color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                        color: AppColors.onSurfaceVariant.withValues(
+                          alpha: 0.5,
+                        ),
                         fontSize: 11,
                       ),
                     ),
