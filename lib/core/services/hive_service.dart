@@ -38,13 +38,12 @@ class HiveService {
   static Future<void> _seedInitialData() async {
     final categoriesBox = Hive.box<CategoryModel>(categoriesBoxName);
     final walletsBox = Hive.box<WalletModel>(walletsBoxName);
-    final transactionsBox = Hive.box<TransactionModel>(transactionsBoxName);
 
-    // 1. Wallets (VND)
+    // 1. Wallets (VND) - Starting with 0 balance
     final mainWallet = WalletModel(
       id: 'w1',
       name: 'Ví chính',
-      balance: 15000000,
+      balance: 0,
       colorValue: 0xFF6366F1,
       icon: 'wallet',
       type: 'Cash',
@@ -52,7 +51,7 @@ class HiveService {
     final bankWallet = WalletModel(
       id: 'w2',
       name: 'Ngân hàng',
-      balance: 50000000,
+      balance: 0,
       colorValue: 0xFF10B981,
       icon: 'account_balance',
       type: 'Bank',
@@ -71,33 +70,6 @@ class HiveService {
     ];
     for (var cat in categories) {
       await categoriesBox.put(cat.id, cat);
-    }
-
-    // 3. Mock Data for a month (approx 30 days back from today)
-    final now = DateTime.now();
-    for (int i = 0; i < 40; i++) {
-      final randomDay = now.subtract(Duration(days: i % 30));
-      final isIncome = i % 8 == 0; // Occasionally income
-      
-      final String catId = isIncome 
-          ? (i % 2 == 0 ? 'c6' : 'c7') 
-          : 'c${(i % 5) + 1}';
-          
-      final amount = isIncome 
-          ? (5000000 + (i * 100000)).toDouble() 
-          : (50000 + (i * 25000)).toDouble();
-
-      final tx = TransactionModel(
-        id: 'tx_$i',
-        title: isIncome ? 'Thu nhập tháng' : 'Chi tiêu ${categories[int.parse(catId.substring(1)) - 1].name}',
-        amount: amount,
-        date: randomDay,
-        isIncome: isIncome,
-        categoryId: catId,
-        walletId: i % 2 == 0 ? 'w1' : 'w2',
-        note: 'Giao dịch mẫu số $i',
-      );
-      await transactionsBox.put(tx.id, tx);
     }
   }
 }
