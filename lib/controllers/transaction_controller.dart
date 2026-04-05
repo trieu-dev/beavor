@@ -84,13 +84,32 @@ class TransactionController extends GetxController {
 
   Future<void> addTransaction(TransactionModel transaction) async {
     await _transactionBox.put(transaction.id, transaction);
+    await _updateWalletBalance(transaction.walletId, transaction.amount, transaction.isIncome);
+    loadData();
+  }
+
+  Future<void> updateTransaction(TransactionModel oldTx, TransactionModel newTx) async {
+    // 1. Revert Old Impact
+    await _updateWalletBalance(oldTx.walletId, -oldTx.amount, oldTx.isIncome);
     
-    // Update Wallet Balance
-    final wallet = _walletBox.get(transaction.walletId);
+    // 2. Apply New Impact
+    await _transactionBox.put(newTx.id, newTx);
+    await _updateWalletBalance(newTx.walletId, newTx.amount, newTx.isIncome);
+    
+    loadData();
+  }
+
+  Future<void> deleteTransaction(TransactionModel transaction) async {
+    await _transactionBox.delete(transaction.id);
+    await _updateWalletBalance(transaction.walletId, -transaction.amount, transaction.isIncome);
+    loadData();
+  }
+
+  Future<void> _updateWalletBalance(String walletId, double amount, bool isIncome) async {
+    final wallet = _walletBox.get(walletId);
     if (wallet != null) {
-      final newBalance = transaction.isIncome 
-          ? wallet.balance + transaction.amount 
-          : wallet.balance - transaction.amount;
+      final double adjustment = isIncome ? amount : -amount;
+      final newBalance = wallet.balance + adjustment;
       
       final updatedWallet = WalletModel(
         id: wallet.id,
@@ -102,8 +121,6 @@ class TransactionController extends GetxController {
       );
       await _walletBox.put(wallet.id, updatedWallet);
     }
-
-    loadData(); // Refresh UI observables
   }
 
   CategoryModel? getCategoryById(String id) {

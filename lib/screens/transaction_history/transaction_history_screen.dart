@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
+import '../add_transaction/add_transaction_screen.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   TransactionHistoryScreen({super.key});
@@ -75,63 +76,66 @@ class TransactionHistoryScreen extends StatelessWidget {
             final category = controller.getCategoryById(tx.categoryId);
             final wallet = controller.getWalletById(tx.walletId);
             
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLow.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+            return GestureDetector(
+              onTap: () => Get.to(() => AddTransactionScreen(initialTransaction: tx)),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerLow.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _getIconData(category?.icon ?? 'category'),
+                        color: Color(category?.colorValue ?? 0xFF6366F1),
+                        size: 24,
+                      ),
                     ),
-                    child: Icon(
-                      _getIconData(category?.icon ?? 'category'),
-                      color: Color(category?.colorValue ?? 0xFF6366F1),
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tx.title,
-                          style: GoogleFonts.manrope(
-                            color: AppColors.onSurface,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tx.title,
+                            style: GoogleFonts.manrope(
+                              color: AppColors.onSurface,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${category?.name ?? 'General'} • ${wallet?.name ?? 'Wallet'} • ${DateFormat('dd/MM/yyyy').format(tx.date)}',
-                          style: GoogleFonts.inter(
-                            color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
-                            fontSize: 12,
+                          const SizedBox(height: 4),
+                          Text(
+                            '${category?.name ?? 'General'} • ${wallet?.name ?? 'Wallet'} • ${DateFormat('dd/MM/yyyy').format(tx.date)}',
+                            style: GoogleFonts.inter(
+                              color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
-                    style: GoogleFonts.manrope(
-                      color: tx.isIncome ? AppColors.secondary : AppColors.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )
-                ],
+                    const SizedBox(width: 8),
+                    Text(
+                      '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
+                      style: GoogleFonts.manrope(
+                        color: tx.isIncome ? AppColors.secondary : AppColors.onSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           },

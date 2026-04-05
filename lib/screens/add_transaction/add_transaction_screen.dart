@@ -10,7 +10,8 @@ import '../../models/transaction_model.dart';
 import '../../core/utils/icon_mapper.dart';
 
 class AddTransactionScreen extends StatefulWidget {
-  const AddTransactionScreen({super.key});
+  final TransactionModel? initialTransaction;
+  const AddTransactionScreen({super.key, this.initialTransaction});
 
   @override
   State<AddTransactionScreen> createState() => _AddTransactionScreenState();
@@ -28,15 +29,27 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   String? _selectedCategoryId;
   String? _selectedWalletId;
 
+  bool get _isEditing => widget.initialTransaction != null;
+
   @override
   void initState() {
     super.initState();
-    // Default selections
-    if (controller.categories.isNotEmpty) {
-      _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome == _isIncome, orElse: () => controller.categories.first).id;
-    }
-    if (controller.wallets.isNotEmpty) {
-      _selectedWalletId = controller.wallets.first.id;
+    if (_isEditing) {
+      final tx = widget.initialTransaction!;
+      _titleController.text = tx.title;
+      _amountController.text = tx.amount.toInt().toString();
+      _isIncome = tx.isIncome;
+      _selectedDate = tx.date;
+      _selectedCategoryId = tx.categoryId;
+      _selectedWalletId = tx.walletId;
+    } else {
+      // Default selections for new transaction
+      if (controller.categories.isNotEmpty) {
+        _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome == _isIncome, orElse: () => controller.categories.first).id;
+      }
+      if (controller.wallets.isNotEmpty) {
+        _selectedWalletId = controller.wallets.first.id;
+      }
     }
   }
 
@@ -62,7 +75,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       final double amount = double.tryParse(_amountController.text) ?? 0.0;
 
       final transaction = TransactionModel(
-        id: generateId(),
+        id: _isEditing ? widget.initialTransaction!.id : generateId(),
         title: _titleController.text,
         amount: amount,
         date: _selectedDate,
@@ -72,12 +85,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         note: '',
       );
 
-      controller.addTransaction(transaction);
+      if (_isEditing) {
+        controller.updateTransaction(widget.initialTransaction!, transaction);
+      } else {
+        controller.addTransaction(transaction);
+      }
+      
       Get.back();
       
       Get.snackbar(
         'success'.tr,
-        'add_tx_success'.tr,
+        _isEditing ? 'update_tx_success'.tr : 'add_tx_success'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.surfaceContainerHigh.withValues(alpha: 0.8),
         colorText: AppColors.onSurface,
@@ -87,6 +105,29 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
+  void _onDelete() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: AppColors.surfaceContainerHigh,
+        title: Text('delete_tx_confirm'.tr, style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+        content: Text('delete_tx_desc'.tr, style: GoogleFonts.inter()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('cancel'.tr)),
+          TextButton(
+            onPressed: () {
+              controller.deleteTransaction(widget.initialTransaction!);
+              Get.back(); // Back from dialog
+              Get.back(); // Back from Edit Screen
+              Get.snackbar('deleted'.tr, 'transaction_deleted'.tr);
+            },
+            child: Text('delete'.tr, style: const TextStyle(color: AppColors.tertiary)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,12 +135,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          'add_tx_title'.tr,
+          _isEditing ? 'edit_tx_title'.tr : 'add_tx_title'.tr,
           style: GoogleFonts.manrope(fontWeight: FontWeight.w700),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          if (_isEditing)
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded, color: AppColors.tertiary),
+              onPressed: _onDelete,
+            ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Stack(
         children: [

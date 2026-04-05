@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
+import '../add_transaction/add_transaction_screen.dart';
 import '../../widgets/empty_transaction_state.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -369,87 +370,90 @@ class DashboardScreen extends StatelessWidget {
           final tx = recent[index];
           final category = controller.getCategoryById(tx.categoryId);
 
-          return Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.03),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: Color(
-                      category?.colorValue ?? 0xFF6366F1,
-                    ).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Icon(
-                    tx.isIncome
-                        ? Icons.keyboard_arrow_down_rounded
-                        : Icons.keyboard_arrow_up_rounded,
-                    color: Color(category?.colorValue ?? 0xFF6366F1),
-                    size: 24,
-                  ),
+          return GestureDetector(
+            onTap: () => Get.to(() => AddTransactionScreen(initialTransaction: tx)),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.03),
+                  width: 1,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      color: Color(
+                        category?.colorValue ?? 0xFF6366F1,
+                      ).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      tx.isIncome
+                          ? Icons.keyboard_arrow_down_rounded
+                          : Icons.keyboard_arrow_up_rounded,
+                      color: Color(category?.colorValue ?? 0xFF6366F1),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          tx.title,
+                          style: GoogleFonts.manrope(
+                            color: AppColors.onSurface,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          category?.name ?? 'General',
+                          style: GoogleFonts.inter(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        tx.title,
+                        '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
                         style: GoogleFonts.manrope(
-                          color: AppColors.onSurface,
+                          color: tx.isIncome
+                              ? AppColors.secondary
+                              : AppColors.onSurface,
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        category?.name ?? 'General',
+                        DateFormat('MMM dd').format(tx.date),
                         style: GoogleFonts.inter(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
+                          color: AppColors.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${tx.isIncome ? '+' : '-'}${currencyFormatter.format(tx.amount)}',
-                      style: GoogleFonts.manrope(
-                        color: tx.isIncome
-                            ? AppColors.secondary
-                            : AppColors.onSurface,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      DateFormat('MMM dd').format(tx.date),
-                      style: GoogleFonts.inter(
-                        color: AppColors.onSurfaceVariant.withValues(
-                          alpha: 0.5,
-                        ),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
