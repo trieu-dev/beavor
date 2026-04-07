@@ -33,11 +33,11 @@ class LivingExpenseController extends GetxController {
       final newExp = LivingExpenseModel(
         id: const Uuid().v4(),
         month: DateTime(now.year, now.month),
-        rent: 5000000, // Default 5M
-        electricityPrevious: 1000,
-        electricityCurrent: 1000,
-        water: 100000,
-        serviceFee: 50000,
+        rent: 0.0,
+        electricityPrevious: 0.0,
+        electricityCurrent: 0.0,
+        water: 0.0,
+        serviceFee: 0.0,
         food: 0,
         transport: 0,
         customExpenses: [],
