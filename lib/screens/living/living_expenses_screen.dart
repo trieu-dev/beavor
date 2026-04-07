@@ -284,7 +284,11 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               ],
             ),
           ),
-          const Icon(Icons.more_vert_rounded, color: Colors.white24),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
+            onPressed: () => onChanged('0'),
+          ),
         ],
       ),
     );
@@ -352,7 +356,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
-            onPressed: () => controller.removeCustomExpense(index),
+            onPressed: () => controller.updateCustomExpense(index, amount: 0),
           ),
         ],
       ),
@@ -415,7 +419,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                   ],
                 ),
               ),
-              const Icon(Icons.more_vert_rounded, color: Colors.white24),
             ],
           ),
           const SizedBox(height: 20),
