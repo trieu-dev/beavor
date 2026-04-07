@@ -65,7 +65,11 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-            child: const Icon(Icons.person_outline, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.person_outline,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ),
       ],
@@ -159,7 +163,9 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         decoration: BoxDecoration(
           color: const Color(0xFF9489FE).withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF9489FE).withValues(alpha: 0.3)),
+          border: Border.all(
+            color: const Color(0xFF9489FE).withValues(alpha: 0.3),
+          ),
         ),
         child: const Row(
           children: [
@@ -200,7 +206,10 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       decoration: BoxDecoration(
         color: const Color(0xFF161C2C),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF9489FE).withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: const Color(0xFF9489FE).withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -210,7 +219,11 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               color: const Color(0xFF2D2F41),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.label_rounded, color: Color(0xFF9489FE), size: 24),
+            child: const Icon(
+              Icons.label_rounded,
+              color: Color(0xFF9489FE),
+              size: 24,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -227,8 +240,11 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   controller: TextEditingController(text: item.name)
-                    ..selection = TextSelection.fromPosition(TextPosition(offset: item.name.length)),
-                  onChanged: (v) => controller.updateCustomExpense(index, name: v),
+                    ..selection = TextSelection.fromPosition(
+                      TextPosition(offset: item.name.length),
+                    ),
+                  onChanged: (v) =>
+                      controller.updateCustomExpense(index, name: v),
                 ),
                 const SizedBox(height: 4),
                 TextField(
@@ -247,15 +263,37 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  controller: TextEditingController(text: item.amount == 0 ? '' : NumberFormat('#,###').format(item.amount))
-                    ..selection = TextSelection.fromPosition(TextPosition(offset: (item.amount == 0 ? '' : NumberFormat('#,###').format(item.amount)).length)),
-                  onChanged: (v) => controller.updateCustomExpense(index, amount: _parseDouble(v)),
+                  controller:
+                      TextEditingController(
+                          text: item.amount == 0
+                              ? ''
+                              : NumberFormat('#,###').format(item.amount),
+                        )
+                        ..selection = TextSelection.fromPosition(
+                          TextPosition(
+                            offset:
+                                (item.amount == 0
+                                        ? ''
+                                        : NumberFormat(
+                                            '#,###',
+                                          ).format(item.amount))
+                                    .length,
+                          ),
+                        ),
+                  onChanged: (v) => controller.updateCustomExpense(
+                    index,
+                    amount: _parseDouble(v),
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              color: Colors.redAccent,
+              size: 20,
+            ),
             onPressed: () => controller.updateCustomExpense(index, amount: 0),
           ),
         ],
@@ -271,7 +309,10 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       decoration: BoxDecoration(
         color: const Color(0xFF161C2C),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.3), width: 1),
+        border: Border.all(
+          color: const Color(0xFF00E676).withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
@@ -283,19 +324,28 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                   color: const Color(0xFF2D2F41),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.flash_on_rounded, color: Color(0xFF00E676), size: 24),
+                child: const Icon(
+                  Icons.flash_on_rounded,
+                  color: Color(0xFF00E676),
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Tiền điện', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                    const Text(
+                      'Tiền điện',
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                    ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         Text(
-                          elecCost == 0 ? '0 ₫' : '${NumberFormat('#,###').format(elecCost)} ₫',
+                          elecCost == 0
+                              ? '0 ₫'
+                              : '${NumberFormat('#,###').format(elecCost)} ₫',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -304,14 +354,23 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF00E676).withValues(alpha: 0.1),
+                            color: const Color(
+                              0xFF00E676,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
                             'EVN + 10% VAT',
-                            style: TextStyle(color: Color(0xFF00E676), fontSize: 10, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: Color(0xFF00E676),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -328,7 +387,10 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                 child: _buildInlineInput(
                   label: 'Chỉ số cũ',
                   value: exp.electricityPrevious,
-                  onChanged: (v) => controller.updateElectricity(_parseDouble(v), exp.electricityCurrent),
+                  onChanged: (v) => controller.updateElectricity(
+                    _parseDouble(v),
+                    exp.electricityCurrent,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -338,7 +400,10 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                 child: _buildInlineInput(
                   label: 'Chỉ số mới',
                   value: exp.electricityCurrent,
-                  onChanged: (v) => controller.updateElectricity(exp.electricityPrevious, _parseDouble(v)),
+                  onChanged: (v) => controller.updateElectricity(
+                    exp.electricityPrevious,
+                    _parseDouble(v),
+                  ),
                   activeColor: const Color(0xFF00E676),
                 ),
               ),
@@ -354,7 +419,11 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               ),
               Text(
                 'Tiêu thụ: ${exp.electricityConsumed.toInt()} kWh',
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -378,7 +447,10 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white38, fontSize: 10)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white38, fontSize: 10),
+          ),
           const SizedBox(height: 4),
           TextField(
             keyboardType: TextInputType.number,
@@ -394,8 +466,16 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               hintText: '0',
               hintStyle: TextStyle(color: Colors.white12),
             ),
-            controller: TextEditingController(text: value == 0 ? '' : value.toInt().toString())
-              ..selection = TextSelection.fromPosition(TextPosition(offset: (value == 0 ? '' : value.toInt().toString()).length)),
+            controller:
+                TextEditingController(
+                    text: value == 0 ? '' : value.toInt().toString(),
+                  )
+                  ..selection = TextSelection.fromPosition(
+                    TextPosition(
+                      offset:
+                          (value == 0 ? '' : value.toInt().toString()).length,
+                    ),
+                  ),
             onChanged: onChanged,
           ),
         ],
@@ -409,8 +489,18 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Số mục đã nhập', style: TextStyle(color: Colors.white54, fontSize: 14)),
-            Text('${exp.getFilledCount().toString().padLeft(2, '0')}/13', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+            const Text(
+              'Số mục đã nhập',
+              style: TextStyle(color: Colors.white54, fontSize: 14),
+            ),
+            Text(
+              '${exp.getFilledCount().toString().padLeft(2, '0')}/13',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -419,16 +509,27 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           children: [
             const Text(
               'Tổng cộng',
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   '${NumberFormat('#,###').format(total)} ₫',
-                  style: const TextStyle(color: Color(0xFF00E676), fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Color(0xFF00E676),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const Text('dự kiến chi tiêu', style: TextStyle(color: Colors.white38, fontSize: 11)),
+                const Text(
+                  'dự kiến chi tiêu',
+                  style: TextStyle(color: Colors.white38, fontSize: 11),
+                ),
               ],
             ),
           ],
@@ -459,11 +560,17 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
         ),
         child: const Text(
           'Lưu dự toán',
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
