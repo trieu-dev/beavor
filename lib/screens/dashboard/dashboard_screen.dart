@@ -8,12 +8,15 @@ import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
+import '../living/living_expenses_screen.dart';
+import '../../controllers/living_expense_controller.dart';
 import '../../widgets/empty_transaction_state.dart';
 
 class DashboardScreen extends StatelessWidget {
   DashboardScreen({super.key});
 
   final TransactionController controller = Get.put(TransactionController());
+  final LivingExpenseController livingController = Get.put(LivingExpenseController());
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +277,11 @@ class DashboardScreen extends StatelessWidget {
           'wallets'.tr,
           () {},
         ),
-        _buildActionItem(Icons.more_horiz_rounded, 'more'.tr, () {}),
+        _buildActionItem(
+          Icons.holiday_village_rounded,
+          'living_title'.tr,
+          () => Get.to(() => const LivingExpensesScreen()),
+        ),
       ],
     );
   }

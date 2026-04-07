@@ -4,6 +4,7 @@ import '../../models/category_model.dart';
 import '../../models/transaction_model.dart';
 import '../../models/budget_model.dart';
 import '../../models/goal_model.dart';
+import '../../models/living_expense_model.dart';
 
 class HiveService {
   static const String transactionsBoxName = 'transactions';
@@ -11,6 +12,7 @@ class HiveService {
   static const String categoriesBoxName = 'categories';
   static const String budgetsBoxName = 'budgets';
   static const String goalsBoxName = 'goals';
+  static const String livingExpensesBoxName = 'living_expenses';
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -21,6 +23,7 @@ class HiveService {
     Hive.registerAdapter(TransactionModelAdapter());
     Hive.registerAdapter(BudgetModelAdapter());
     Hive.registerAdapter(GoalModelAdapter());
+    Hive.registerAdapter(LivingExpenseModelAdapter());
 
     // Open Boxes
     await Hive.openBox<WalletModel>(walletsBoxName);
@@ -28,6 +31,7 @@ class HiveService {
     await Hive.openBox<TransactionModel>(transactionsBoxName);
     await Hive.openBox<BudgetModel>(budgetsBoxName);
     await Hive.openBox<GoalModel>(goalsBoxName);
+    await Hive.openBox<LivingExpenseModel>(livingExpensesBoxName);
 
     // Initial Data if empty
     if (Hive.box<CategoryModel>(categoriesBoxName).isEmpty) {
