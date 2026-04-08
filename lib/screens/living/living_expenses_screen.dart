@@ -233,8 +233,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                 TextField(
                   style: const TextStyle(color: Colors.white70, fontSize: 13),
                   decoration: const InputDecoration(
-                    hintText: 'Nhập tên chi phí ví dụ: Tiền nhà',
-                    hintStyle: TextStyle(color: Colors.white24, fontSize: 12),
+                    hintText: 'Chi phí mới',
+                    hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
