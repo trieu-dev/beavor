@@ -6,10 +6,10 @@ import '../core/services/hive_service.dart';
 
 class LivingExpenseController extends GetxController {
   late Box<LivingExpenseModel> _livingExpenseBox;
-  
+
   var livingExpenses = <LivingExpenseModel>[].obs;
   var currentExpense = Rxn<LivingExpenseModel>();
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -17,15 +17,17 @@ class LivingExpenseController extends GetxController {
   }
 
   Future<void> _initBox() async {
-    _livingExpenseBox = Hive.box<LivingExpenseModel>(HiveService.livingExpensesBoxName);
+    _livingExpenseBox = Hive.box<LivingExpenseModel>(
+      HiveService.livingExpensesBoxName,
+    );
     loadExpenses();
-    
+
     // Initialize current expense for this month if not exists
     final now = DateTime.now();
     final thisMonthExp = livingExpenses.firstWhereOrNull(
-      (e) => e.month.year == now.year && e.month.month == now.month
+      (e) => e.month.year == now.year && e.month.month == now.month,
     );
-    
+
     if (thisMonthExp != null) {
       currentExpense.value = thisMonthExp;
     } else {
@@ -47,13 +49,18 @@ class LivingExpenseController extends GetxController {
   }
 
   void loadExpenses() {
-    livingExpenses.assignAll(_livingExpenseBox.values.toList()
-      ..sort((a, b) => b.month.compareTo(a.month)));
+    livingExpenses.assignAll(
+      _livingExpenseBox.values.toList()
+        ..sort((a, b) => b.month.compareTo(a.month)),
+    );
   }
 
   Future<void> saveCurrentExpense() async {
     if (currentExpense.value != null) {
-      await _livingExpenseBox.put(currentExpense.value!.id, currentExpense.value!);
+      await _livingExpenseBox.put(
+        currentExpense.value!.id,
+        currentExpense.value!,
+      );
       loadExpenses();
     }
   }
@@ -70,15 +77,17 @@ class LivingExpenseController extends GetxController {
   }
 
   void updateElectricity(double prev, double curr) {
-    _updateCurrent((e) => e
-      ..electricityPrevious = prev
-      ..electricityCurrent = curr);
+    _updateCurrent(
+      (e) => e
+        ..electricityPrevious = prev
+        ..electricityCurrent = curr,
+    );
   }
 
   void updateWater(double value) {
     _updateCurrent((e) => e..water = value);
   }
-  
+
   void updateServiceFee(double value) {
     _updateCurrent((e) => e..serviceFee = value);
   }
@@ -97,7 +106,7 @@ class LivingExpenseController extends GetxController {
     _updateCurrent((e) {
       final newItem = CustomExpenseItem(
         id: const Uuid().v4(),
-        name: 'Chi phí mới',
+        name: '',
         amount: 0.0,
       );
       // Ensure we have a mutable list
