@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -57,11 +58,33 @@ class LivingExpenseController extends GetxController {
 
   Future<void> saveCurrentExpense() async {
     if (currentExpense.value != null) {
-      await _livingExpenseBox.put(
-        currentExpense.value!.id,
-        currentExpense.value!,
-      );
-      loadExpenses();
+      try {
+        await _livingExpenseBox.put(
+          currentExpense.value!.id,
+          currentExpense.value!,
+        );
+        loadExpenses();
+        Get.snackbar(
+          'Thành công',
+          'Dự toán đã được lưu thành công!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF00E676).withValues(alpha: 0.1),
+          colorText: const Color(0xFF00E676),
+          icon: const Icon(Icons.check_circle_outline, color: Color(0xFF00E676)),
+          margin: const EdgeInsets.all(20),
+          duration: const Duration(seconds: 2),
+        );
+      } catch (e) {
+        Get.snackbar(
+          'Lỗi',
+          'Không thể lưu dự toán: $e',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent.withValues(alpha: 0.1),
+          colorText: Colors.redAccent,
+          icon: const Icon(Icons.error_outline, color: Colors.redAccent),
+          margin: const EdgeInsets.all(20),
+        );
+      }
     }
   }
 
