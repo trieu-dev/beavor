@@ -23,6 +23,7 @@ class HiveService {
     Hive.registerAdapter(TransactionModelAdapter());
     Hive.registerAdapter(BudgetModelAdapter());
     Hive.registerAdapter(GoalModelAdapter());
+    Hive.registerAdapter(CustomExpenseItemAdapter());
     Hive.registerAdapter(LivingExpenseModelAdapter());
 
     // Open Boxes
