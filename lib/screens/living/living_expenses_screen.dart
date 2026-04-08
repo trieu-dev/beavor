@@ -294,7 +294,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               color: Colors.redAccent,
               size: 20,
             ),
-            onPressed: () => controller.updateCustomExpense(index, amount: 0),
+            onPressed: () => controller.removeCustomExpense(index),
           ),
         ],
       ),
