@@ -79,22 +79,7 @@ class LivingExpenseModel extends HiveObject {
     double consumed = electricityConsumed;
     if (consumed <= 0) return 0.0;
 
-    double cost = 0.0;
-    if (consumed <= 50) {
-      cost = consumed * 1806;
-    } else if (consumed <= 100) {
-      cost = 50 * 1806 + (consumed - 50) * 1866;
-    } else if (consumed <= 200) {
-      cost = 50 * 1806 + 50 * 1866 + (consumed - 100) * 2167;
-    } else if (consumed <= 300) {
-      cost = 50 * 1806 + 50 * 1866 + 100 * 2167 + (consumed - 200) * 2729;
-    } else if (consumed <= 400) {
-      cost = 50 * 1806 + 50 * 1866 + 100 * 2167 + 100 * 2729 + (consumed - 300) * 3050;
-    } else {
-      cost = 50 * 1806 + 50 * 1866 + 100 * 2167 + 100 * 2729 + 100 * 3050 + (consumed - 400) * 3151;
-    }
-
-    return cost * 1.1;
+    return consumed * 3500;
   }
 
   double calculateTotal() {
