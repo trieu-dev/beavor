@@ -79,7 +79,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
   Widget _buildSummaryCard(double total) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       decoration: BoxDecoration(
         color: const Color(0xFF161C2C),
         borderRadius: BorderRadius.circular(40),
@@ -87,7 +87,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       child: Column(
         children: [
           const Text(
-            'TỔNG DỰ TOÁN THÁNG',
+            'TỔNG',
             style: TextStyle(
               color: Colors.white54,
               fontSize: 14,
@@ -104,33 +104,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                 fontSize: 42,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildTrendChip(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendChip() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A2135),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.trending_up, color: Color(0xFF00E676), size: 16),
-          SizedBox(width: 4),
-          Text(
-            '+3.1% so với tháng trước',
-            style: TextStyle(
-              color: Color(0xFF00E676),
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -352,27 +325,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF00E676,
-                            ).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'EVN + 10% VAT',
-                            style: TextStyle(
-                              color: Color(0xFF00E676),
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -414,7 +366,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Hệ số (đ/kWh): 3.000',
+                'Hệ số (đ/kWh): 3.500',
                 style: TextStyle(color: Colors.white54, fontSize: 12),
               ),
               Text(
