@@ -51,8 +51,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         onPressed: () {},
       ),
       centerTitle: true,
-      title: const Text(
-        'Monthly Ledger',
+      title: Text(
+        'living_monthly_ledger'.tr,
         style: TextStyle(
           color: Color(0xFF9489FE),
           fontWeight: FontWeight.bold,
@@ -86,8 +86,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       ),
       child: Column(
         children: [
-          const Text(
-            'TỔNG',
+          Text(
+            'living_total_label'.tr,
             style: TextStyle(
               color: Colors.white54,
               fontSize: 14,
@@ -115,8 +115,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'Danh mục chi tiêu',
+        Text(
+          'living_categories_header'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -140,12 +140,12 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
             color: const Color(0xFF9489FE).withValues(alpha: 0.3),
           ),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.add_circle, color: Color(0xFF9489FE), size: 18),
             SizedBox(width: 4),
             Text(
-              'Thêm mới',
+              'living_add_new'.tr,
               style: TextStyle(
                 color: Color(0xFF9489FE),
                 fontSize: 12,
@@ -205,8 +205,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               children: [
                 TextField(
                   style: const TextStyle(color: Colors.white70, fontSize: 13),
-                  decoration: const InputDecoration(
-                    hintText: 'Chi phí mới',
+                  decoration: InputDecoration(
+                    hintText: 'living_new_exp_hint'.tr,
                     hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
                     border: InputBorder.none,
                     isDense: true,
@@ -227,8 +227,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                  decoration: const InputDecoration(
-                    hintText: 'Nhập số tiền',
+                  decoration: InputDecoration(
+                    hintText: 'living_amount_hint'.tr,
                     hintStyle: TextStyle(color: Colors.white24, fontSize: 18),
                     suffixText: '₫',
                     suffixStyle: TextStyle(color: Colors.white54, fontSize: 14),
@@ -308,8 +308,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Tiền điện',
+                    Text(
+                      'living_elec'.tr,
                       style: TextStyle(color: Colors.white70, fontSize: 13),
                     ),
                     const SizedBox(height: 4),
@@ -337,7 +337,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
             children: [
               Expanded(
                 child: _buildInlineInput(
-                  label: 'Chỉ số cũ',
+                  label: 'living_prev'.tr,
                   value: exp.electricityPrevious,
                   onChanged: (v) => controller.updateElectricity(
                     _parseDouble(v),
@@ -350,7 +350,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildInlineInput(
-                  label: 'Chỉ số mới',
+                  label: 'living_curr'.tr,
                   value: exp.electricityCurrent,
                   onChanged: (v) => controller.updateElectricity(
                     exp.electricityPrevious,
@@ -365,12 +365,14 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Hệ số (đ/kWh): 3.500',
-                style: TextStyle(color: Colors.white54, fontSize: 12),
+              Text(
+                'living_factor_label'.tr,
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
               ),
               Text(
-                'Tiêu thụ: ${exp.electricityConsumed.toInt()} kWh',
+                'living_consumed_label'.trParams({
+                  'count': exp.electricityConsumed.toInt().toString(),
+                }),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -441,8 +443,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Số mục đã nhập',
+            Text(
+              'living_items_entered'.tr,
               style: TextStyle(color: Colors.white54, fontSize: 14),
             ),
             Text(
@@ -459,8 +461,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Tổng cộng',
+            Text(
+              'living_grand_total'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -478,8 +480,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
-                  'dự kiến chi tiêu',
+                Text(
+                  'living_est_spending'.tr,
                   style: TextStyle(color: Colors.white38, fontSize: 11),
                 ),
               ],
@@ -516,8 +518,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
             borderRadius: BorderRadius.circular(32),
           ),
         ),
-        child: const Text(
-          'Lưu dự toán',
+        child: Text(
+          'living_save_estimate'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,

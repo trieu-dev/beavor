@@ -65,8 +65,8 @@ class LivingExpenseController extends GetxController {
         );
         loadExpenses();
         Get.snackbar(
-          'Thành công',
-          'Dự toán đã được lưu thành công!',
+          'success'.tr,
+          'living_save_success'.tr,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: const Color(0xFF00E676).withValues(alpha: 0.1),
           colorText: const Color(0xFF00E676),
@@ -76,8 +76,8 @@ class LivingExpenseController extends GetxController {
         );
       } catch (e) {
         Get.snackbar(
-          'Lỗi',
-          'Không thể lưu dự toán: $e',
+          'error'.tr,
+          'living_save_error'.trParams({'error': e.toString()}),
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.redAccent.withValues(alpha: 0.1),
           colorText: Colors.redAccent,
