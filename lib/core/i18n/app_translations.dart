@@ -93,6 +93,7 @@ class AppTranslations extends Translations {
           'living_save_estimate': 'Save Estimate',
           'error': 'Error',
           'living_save_error': 'Failed to save estimate: @error',
+          'living_swap': 'Swap values',
         },
         'vi_VN': {
           'app_title': 'Luminous Ledger',
@@ -184,6 +185,7 @@ class AppTranslations extends Translations {
           'living_save_estimate': 'Lưu dự toán',
           'error': 'Lỗi',
           'living_save_error': 'Không thể lưu dự toán: @error',
+          'living_swap': 'Đổi giá trị',
         },
       };
 }

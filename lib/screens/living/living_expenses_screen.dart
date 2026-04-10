@@ -345,9 +345,19 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              const Icon(Icons.link_rounded, color: Colors.white12),
-              const SizedBox(width: 12),
+              const SizedBox(width: 4),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () => controller.swapElectricityValues(),
+                icon: Icon(
+                  Icons.swap_horiz_rounded,
+                  color: Colors.white.withValues(alpha: 0.2),
+                  size: 20,
+                ),
+                tooltip: 'living_swap'.tr,
+              ),
+              const SizedBox(width: 4),
               Expanded(
                 child: _buildInlineInput(
                   label: 'living_curr'.tr,

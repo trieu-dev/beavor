@@ -107,6 +107,15 @@ class LivingExpenseController extends GetxController {
     );
   }
 
+  void swapElectricityValues() {
+    _updateCurrent((e) {
+      final temp = e.electricityPrevious;
+      return e
+        ..electricityPrevious = e.electricityCurrent
+        ..electricityCurrent = temp;
+    });
+  }
+
   void updateWater(double value) {
     _updateCurrent((e) => e..water = value);
   }
