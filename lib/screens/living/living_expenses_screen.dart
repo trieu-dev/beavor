@@ -47,8 +47,8 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.menu_rounded, color: Colors.white),
-        onPressed: () {},
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+        onPressed: () => Get.back(),
       ),
       centerTitle: true,
       title: Text(
