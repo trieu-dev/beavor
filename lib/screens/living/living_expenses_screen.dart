@@ -31,8 +31,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               const SizedBox(height: 16),
               _buildExpenseList(exp),
               const SizedBox(height: 32),
-              _buildStatsFooter(exp, total),
-              const SizedBox(height: 24),
               _buildSaveButton(),
               const SizedBox(height: 40),
             ],
@@ -444,61 +442,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatsFooter(dynamic exp, double total) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'living_items_entered'.tr,
-              style: TextStyle(color: Colors.white54, fontSize: 14),
-            ),
-            Text(
-              '${exp.getFilledCount().toString().padLeft(2, '0')}/13',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'living_grand_total'.tr,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${NumberFormat('#,###').format(total)} ₫',
-                  style: const TextStyle(
-                    color: Color(0xFF00E676),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'living_est_spending'.tr,
-                  style: TextStyle(color: Colors.white38, fontSize: 11),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
     );
   }
 
