@@ -45,7 +45,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     } else {
       // Default selections for new transaction
       if (controller.categories.isNotEmpty) {
-        _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome == _isIncome, orElse: () => controller.categories.first).id;
+        _selectedCategoryId = controller.categories
+            .firstWhere(
+              (c) => c.isIncome == _isIncome,
+              orElse: () => controller.categories.first,
+            )
+            .id;
       }
       if (controller.wallets.isNotEmpty) {
         _selectedWalletId = controller.wallets.first.id;
@@ -67,8 +72,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       if (_selectedCategoryId == null || _selectedWalletId == null) {
-        Get.snackbar('Error', 'Please select a category and a wallet', 
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.redAccent, colorText: Colors.white);
+        Get.snackbar(
+          'Error',
+          'Please select a category and a wallet',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
         return;
       }
 
@@ -90,9 +100,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       } else {
         controller.addTransaction(transaction);
       }
-      
+
       Get.back();
-      
+
       Get.snackbar(
         'success'.tr,
         _isEditing ? 'update_tx_success'.tr : 'add_tx_success'.tr,
@@ -109,7 +119,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     Get.dialog(
       AlertDialog(
         backgroundColor: AppColors.surfaceContainerHigh,
-        title: Text('delete_tx_confirm'.tr, style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+        title: Text(
+          'delete_tx_confirm'.tr,
+          style: GoogleFonts.manrope(fontWeight: FontWeight.w700),
+        ),
         content: Text('delete_tx_desc'.tr, style: GoogleFonts.inter()),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         actions: [
@@ -121,7 +134,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               Get.back(); // Back from Edit Screen
               Get.snackbar('deleted'.tr, 'transaction_deleted'.tr);
             },
-            child: Text('delete'.tr, style: const TextStyle(color: AppColors.tertiary)),
+            child: Text(
+              'delete'.tr,
+              style: const TextStyle(color: AppColors.tertiary),
+            ),
           ),
         ],
       ),
@@ -144,7 +160,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         actions: [
           if (_isEditing)
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, color: AppColors.tertiary),
+              icon: const Icon(
+                Icons.delete_outline_rounded,
+                color: AppColors.tertiary,
+              ),
               onPressed: _onDelete,
             ),
           const SizedBox(width: 8),
@@ -186,7 +205,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       controller: _titleController,
                       label: 'form_title'.tr,
                       icon: Icons.title_rounded,
-                      validator: (val) => (val == null || val.isEmpty) ? 'form_error_title'.tr : null,
+                      validator: (val) => (val == null || val.isEmpty)
+                          ? 'form_error_title'.tr
+                          : null,
                     ),
                     const SizedBox(height: 20),
 
@@ -194,10 +215,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       controller: _amountController,
                       label: '${'form_amount'.tr} (₫)',
                       icon: Icons.payments_rounded,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: false),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: false,
+                      ),
                       validator: (val) {
-                        if (val == null || val.isEmpty) return 'form_error_amount'.tr;
-                        if (double.tryParse(val) == null) return 'form_error_format'.tr;
+                        if (val == null || val.isEmpty)
+                          return 'form_error_amount'.tr;
+                        if (double.tryParse(val) == null)
+                          return 'form_error_format'.tr;
                         return null;
                       },
                     ),
@@ -208,13 +233,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     _buildCategoryPicker(),
                     const SizedBox(height: 24),
 
-                    _buildSectionLabel('wallets'.tr),
-                    const SizedBox(height: 12),
-                    _buildWalletPicker(),
-                    const SizedBox(height: 24),
-
                     _buildDatePickerTile(),
-                    
+
                     const SizedBox(height: 48),
 
                     _buildSubmitButton(),
@@ -269,11 +289,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 controller: controller,
                 keyboardType: keyboardType,
                 validator: validator,
-                style: GoogleFonts.inter(color: AppColors.onSurface, fontSize: 16),
+                style: GoogleFonts.inter(
+                  color: AppColors.onSurface,
+                  fontSize: 16,
+                ),
                 decoration: InputDecoration(
-                  prefixIcon: Icon(icon, color: AppColors.primary.withValues(alpha: 0.7)),
+                  prefixIcon: Icon(
+                    icon,
+                    color: AppColors.primary.withValues(alpha: 0.7),
+                  ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 18,
+                  ),
                   errorStyle: const TextStyle(height: 0),
                 ),
               ),
@@ -285,8 +314,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildCategoryPicker() {
-    final filteredCategories = controller.categories.where((c) => c.isIncome == _isIncome).toList();
-    
+    final filteredCategories = controller.categories
+        .where((c) => c.isIncome == _isIncome)
+        .toList();
+
     return SizedBox(
       height: 100,
       child: ListView.separated(
@@ -296,21 +327,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         itemBuilder: (context, index) {
           final cat = filteredCategories[index];
           final isSelected = _selectedCategoryId == cat.id;
-          
+
           return GestureDetector(
             onTap: () => setState(() => _selectedCategoryId = cat.id),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 80,
               decoration: BoxDecoration(
-                color: isSelected 
-                  ? Color(cat.colorValue).withValues(alpha: 0.2) 
-                  : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
+                color: isSelected
+                    ? Color(cat.colorValue).withValues(alpha: 0.2)
+                    : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected 
-                    ? Color(cat.colorValue) 
-                    : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected
+                      ? Color(cat.colorValue)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 2,
                 ),
               ),
@@ -319,69 +350,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 children: [
                   Icon(
                     IconMapper.getIconData(cat.icon),
-                    color: isSelected ? Color(cat.colorValue) : AppColors.onSurfaceVariant,
+                    color: isSelected
+                        ? Color(cat.colorValue)
+                        : AppColors.onSurfaceVariant,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     cat.name.tr,
                     style: GoogleFonts.inter(
                       fontSize: 11,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? AppColors.onSurface
+                          : AppColors.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildWalletPicker() {
-    return SizedBox(
-      height: 60,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: controller.wallets.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final wallet = controller.wallets[index];
-          final isSelected = _selectedWalletId == wallet.id;
-          
-          return GestureDetector(
-            onTap: () => setState(() => _selectedWalletId = wallet.id),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: isSelected 
-                  ? Color(wallet.colorValue).withValues(alpha: 0.2) 
-                  : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected 
-                    ? Color(wallet.colorValue) 
-                    : Colors.white.withValues(alpha: 0.05),
-                  width: 2,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    IconMapper.getIconData(wallet.icon),
-                    size: 18,
-                    color: isSelected ? Color(wallet.colorValue) : AppColors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    wallet.name,
-                    style: GoogleFonts.manrope(
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
-                    ),
                   ),
                 ],
               ),
@@ -417,11 +402,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: AppColors.primary.withValues(alpha: 0.7)),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.primary.withValues(alpha: 0.7),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   DateFormat('dd/MM/yyyy').format(_selectedDate),
-                  style: GoogleFonts.inter(color: AppColors.onSurface, fontSize: 16),
+                  style: GoogleFonts.inter(
+                    color: AppColors.onSurface,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
@@ -450,7 +441,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         child: Text(
           'add_tx_save'.tr,
@@ -482,7 +475,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               setState(() {
                 _isIncome = false;
                 // Re-select first expense category
-                _selectedCategoryId = controller.categories.firstWhere((c) => !c.isIncome).id;
+                _selectedCategoryId = controller.categories
+                    .firstWhere((c) => !c.isIncome)
+                    .id;
               });
             },
           ),
@@ -494,7 +489,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               setState(() {
                 _isIncome = true;
                 // Re-select first income category
-                _selectedCategoryId = controller.categories.firstWhere((c) => c.isIncome).id;
+                _selectedCategoryId = controller.categories
+                    .firstWhere((c) => c.isIncome)
+                    .id;
               });
             },
           ),
@@ -516,17 +513,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: isSelected ? activeColor.withValues(alpha: 0.2) : Colors.transparent,
+            color: isSelected
+                ? activeColor.withValues(alpha: 0.2)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(18),
-            border: isSelected 
-              ? Border.all(color: activeColor.withValues(alpha: 0.3))
-              : null,
+            border: isSelected
+                ? Border.all(color: activeColor.withValues(alpha: 0.3))
+                : null,
           ),
           child: Center(
             child: Text(
               label,
               style: GoogleFonts.manrope(
-                color: isSelected ? activeColor : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                color: isSelected
+                    ? activeColor
+                    : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 15,
               ),
