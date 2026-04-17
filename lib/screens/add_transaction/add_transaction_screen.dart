@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../../models/transaction_model.dart';
 import '../../core/utils/icon_mapper.dart';
+import '../add_category/add_category_screen.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final TransactionModel? initialTransaction;
@@ -318,13 +319,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         .where((c) => c.isIncome == _isIncome)
         .toList();
 
+    // +1 for the "Add New" button at the end
+    final itemCount = filteredCategories.length + 1;
+
     return SizedBox(
       height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: filteredCategories.length,
+        itemCount: itemCount,
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
+          // Last item is the "Add New" button
+          if (index == filteredCategories.length) {
+            return _buildAddCategoryButton();
+          }
+
           final cat = filteredCategories[index];
           final isSelected = _selectedCategoryId == cat.id;
 
@@ -373,6 +382,61 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildAddCategoryButton() {
+    return GestureDetector(
+      onTap: () async {
+        await Get.to(() => const AddCategoryScreen());
+        // Reload categories when returning from AddCategoryScreen
+        setState(() {
+          controller.loadData();
+        });
+      },
+      child: Container(
+        width: 80,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerHigh.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.onSurfaceVariant.withValues(alpha: 0.3),
+            width: 1.5,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+        ),
+        child: CustomPaint(
+          painter: _DashedBorderPainter(
+            color: AppColors.onSurfaceVariant.withValues(alpha: 0.3),
+            borderRadius: 20,
+            strokeWidth: 1.5,
+            dashWidth: 6,
+            dashSpace: 4,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_rounded,
+                color: AppColors.onSurfaceVariant,
+                size: 24,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'add_cat_short'.tr,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -537,4 +601,58 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       ),
     );
   }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double borderRadius;
+  final double strokeWidth;
+  final double dashWidth;
+  final double dashSpace;
+
+  _DashedBorderPainter({
+    required this.color,
+    required this.borderRadius,
+    required this.strokeWidth,
+    required this.dashWidth,
+    required this.dashSpace,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          Radius.circular(borderRadius),
+        ),
+      );
+
+    // Create dashed path
+    final dashPath = Path();
+    for (final metric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < metric.length) {
+        final end = (distance + dashWidth).clamp(0, metric.length);
+        dashPath.addPath(
+          metric.extractPath(distance, end.toDouble()),
+          Offset.zero,
+        );
+        distance += dashWidth + dashSpace;
+      }
+    }
+
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) =>
+      color != oldDelegate.color ||
+      borderRadius != oldDelegate.borderRadius ||
+      strokeWidth != oldDelegate.strokeWidth;
 }
