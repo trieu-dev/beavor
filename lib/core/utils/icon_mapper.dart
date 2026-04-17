@@ -16,6 +16,9 @@ class IconMapper {
       case 'work': return Icons.work_rounded;
       case 'school': return Icons.school_rounded;
       case 'health': return Icons.medical_services_rounded;
+      case 'flight': return Icons.flight_rounded;
+      case 'local_gas_station': return Icons.local_gas_station_rounded;
+      case 'local_laundry_service': return Icons.local_laundry_service_rounded;
       default: return Icons.category_rounded;
     }
   }

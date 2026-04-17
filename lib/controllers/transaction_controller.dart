@@ -123,6 +123,11 @@ class TransactionController extends GetxController {
     }
   }
 
+  Future<void> addCategory(CategoryModel category) async {
+    await _categoryBox.put(category.id, category);
+    loadData();
+  }
+
   CategoryModel? getCategoryById(String id) {
     return _categoryBox.get(id);
   }
