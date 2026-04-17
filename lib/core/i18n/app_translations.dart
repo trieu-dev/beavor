@@ -106,6 +106,7 @@ class AppTranslations extends Translations {
           'add_cat_error_name': 'Please enter a category name',
           'add_cat_default_name': 'Food & Drink',
           'add_cat_preview_subtitle': '0 ₫ this month',
+          'add_cat_short': 'Add new',
         },
         'vi_VN': {
           'app_title': 'Luminous Ledger',
@@ -210,6 +211,7 @@ class AppTranslations extends Translations {
           'add_cat_error_name': 'Vui lòng nhập tên hạng mục',
           'add_cat_default_name': 'Ăn uống',
           'add_cat_preview_subtitle': '0 ₫ trong tháng này',
+          'add_cat_short': 'Thêm mới',
         },
       };
 }
