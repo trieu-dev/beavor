@@ -44,10 +44,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-        onPressed: () => Get.back(),
-      ),
       centerTitle: true,
       title: Text(
         'living_monthly_ledger'.tr,

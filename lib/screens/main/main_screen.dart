@@ -6,7 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
 import '../calendar/calendar_screen.dart';
-import '../profile/profile_screen.dart';
+import '../living/living_expenses_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
     DashboardScreen(),
     const CalendarScreen(),
     ExpenseAnalysisScreen(),
-    const ProfileScreen(),
+    const LivingExpensesScreen(),
   ];
 
   void _onTabTapped(int index) {
@@ -96,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
                 _buildNavItem(Icons.calendar_today_rounded, 1, 'nav_calendar'.tr),
                 const SizedBox(width: 48), // Space for FAB
                 _buildNavItem(Icons.bar_chart_rounded, 2, 'nav_analysis'.tr),
-                _buildNavItem(Icons.person_rounded, 3, 'nav_profile'.tr),
+                _buildNavItem(Icons.holiday_village_rounded, 3, 'living_title'.tr),
               ],
             ),
           ),
