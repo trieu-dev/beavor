@@ -1,31 +1,11 @@
-import 'package:hive/hive.dart';
-
-part 'transaction_model.g.dart';
-
-@HiveType(typeId: 2)
-class TransactionModel extends HiveObject {
-  @HiveField(0)
+class TransactionModel {
   final String id;
-  
-  @HiveField(1)
   final String title;
-  
-  @HiveField(2)
   final double amount;
-  
-  @HiveField(3)
   final DateTime date;
-  
-  @HiveField(4)
   final bool isIncome;
-  
-  @HiveField(5)
   final String categoryId;
-  
-  @HiveField(6)
   final String walletId;
-  
-  @HiveField(7)
   final String? note;
 
   TransactionModel({
@@ -38,4 +18,30 @@ class TransactionModel extends HiveObject {
     required this.walletId,
     this.note,
   });
+
+  factory TransactionModel.fromMap(Map<String, dynamic> map) {
+    return TransactionModel(
+      id: map['id'],
+      title: map['title'],
+      amount: (map['amount'] as num).toDouble(),
+      date: DateTime.parse(map['date']),
+      isIncome: map['is_income'],
+      categoryId: map['category_id'],
+      walletId: map['wallet_id'],
+      note: map['note'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'amount': amount,
+      'date': date.toIso8601String(),
+      'is_income': isIncome,
+      'category_id': categoryId,
+      'wallet_id': walletId,
+      'note': note,
+    };
+  }
 }

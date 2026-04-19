@@ -1,22 +1,8 @@
-import 'package:hive/hive.dart';
-
-part 'budget_model.g.dart';
-
-@HiveType(typeId: 3)
-class BudgetModel extends HiveObject {
-  @HiveField(0)
+class BudgetModel {
   final String id;
-  
-  @HiveField(1)
   final String categoryId;
-  
-  @HiveField(2)
   final double limitAmount;
-  
-  @HiveField(3)
   final double spentAmount;
-  
-  @HiveField(4)
   final String period; // e.g., 'Monthly', 'Weekly'
 
   BudgetModel({
@@ -26,4 +12,24 @@ class BudgetModel extends HiveObject {
     this.spentAmount = 0.0,
     required this.period,
   });
+
+  factory BudgetModel.fromMap(Map<String, dynamic> map) {
+    return BudgetModel(
+      id: map['id'],
+      categoryId: map['category_id'],
+      limitAmount: (map['limit_amount'] as num).toDouble(),
+      spentAmount: (map['spent_amount'] as num).toDouble(),
+      period: map['period'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'category_id': categoryId,
+      'limit_amount': limitAmount,
+      'spent_amount': spentAmount,
+      'period': period,
+    };
+  }
 }

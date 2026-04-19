@@ -1,22 +1,8 @@
-import 'package:hive/hive.dart';
-
-part 'category_model.g.dart';
-
-@HiveType(typeId: 1)
-class CategoryModel extends HiveObject {
-  @HiveField(0)
+class CategoryModel {
   final String id;
-  
-  @HiveField(1)
   final String name;
-  
-  @HiveField(2)
   final String icon;
-  
-  @HiveField(3)
   final int colorValue;
-  
-  @HiveField(4)
   final bool isIncome;
 
   CategoryModel({
@@ -26,4 +12,24 @@ class CategoryModel extends HiveObject {
     required this.colorValue,
     required this.isIncome,
   });
+
+  factory CategoryModel.fromMap(Map<String, dynamic> map) {
+    return CategoryModel(
+      id: map['id'],
+      name: map['name'],
+      icon: map['icon'],
+      colorValue: map['color_value'],
+      isIncome: map['is_income'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'icon': icon,
+      'color_value': colorValue,
+      'is_income': isIncome,
+    };
+  }
 }

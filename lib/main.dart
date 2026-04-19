@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/i18n/app_translations.dart';
-import 'core/services/hive_service.dart';
+import 'core/services/supabase_service.dart';
 import 'screens/main/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await HiveService.init();
+  await dotenv.load(fileName: ".env");
+
+  final supabaseUrl = dotenv.env['SUPABASE_URL']!;
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
+  await SupabaseService().init(url: supabaseUrl, anonKey: supabaseAnonKey);
+
   runApp(const LuminousLedgerApp());
 }
 
