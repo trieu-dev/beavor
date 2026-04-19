@@ -45,17 +45,38 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       _selectedWalletId = tx.walletId;
     } else {
       // Default selections for new transaction
-      if (controller.categories.isNotEmpty) {
-        _selectedCategoryId = controller.categories
-            .firstWhere(
-              (c) => c.isIncome == _isIncome,
-              orElse: () => controller.categories.first,
-            )
-            .id;
+      _setDefaultSelections();
+      
+      // Listen for data loading if it was empty initially
+      controller.categories.listen((_) {
+        if (mounted && _selectedCategoryId == null) {
+          setState(() {
+            _setDefaultSelections();
+          });
+        }
+      });
+      
+      controller.wallets.listen((_) {
+        if (mounted && _selectedWalletId == null) {
+          setState(() {
+            _setDefaultSelections();
+          });
+        }
+      });
+    }
+  }
+
+  void _setDefaultSelections() {
+    if (controller.categories.isNotEmpty && _selectedCategoryId == null) {
+      final matched = controller.categories.where((c) => c.isIncome == _isIncome).toList();
+      if (matched.isNotEmpty) {
+        _selectedCategoryId = matched.first.id;
+      } else {
+        _selectedCategoryId = controller.categories.first.id;
       }
-      if (controller.wallets.isNotEmpty) {
-        _selectedWalletId = controller.wallets.first.id;
-      }
+    }
+    if (controller.wallets.isNotEmpty && _selectedWalletId == null) {
+      _selectedWalletId = controller.wallets.first.id;
     }
   }
 
@@ -315,9 +336,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildCategoryPicker() {
-    final filteredCategories = controller.categories
-        .where((c) => c.isIncome == _isIncome)
-        .toList();
+    return Obx(() {
+      final filteredCategories = controller.categories
+          .where((c) => c.isIncome == _isIncome)
+          .toList();
 
     // +1 for the "Add New" button at the end
     final itemCount = filteredCategories.length + 1;
@@ -382,8 +404,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
           );
         },
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildAddCategoryButton() {
