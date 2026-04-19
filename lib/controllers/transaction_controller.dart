@@ -127,6 +127,27 @@ class TransactionController extends GetxController {
         'color_value': 0xFFF59E0B,
         'is_income': true,
       },
+      {
+        'id': 'c8',
+        'name': 'Sức khỏe',
+        'icon': 'medical_services',
+        'color_value': 0xFFEF4444,
+        'is_income': false,
+      },
+      {
+        'id': 'c9',
+        'name': 'Giáo dục',
+        'icon': 'school',
+        'color_value': 0xFF10B981,
+        'is_income': false,
+      },
+      {
+        'id': 'c10',
+        'name': 'Khác',
+        'icon': 'more_horiz',
+        'color_value': 0xFF6B7280,
+        'is_income': false,
+      },
     ];
     await _client.from('categories').insert(categoriesToSeed);
   }
