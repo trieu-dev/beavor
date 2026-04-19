@@ -1,25 +1,9 @@
-import 'package:hive/hive.dart';
-
-part 'goal_model.g.dart';
-
-@HiveType(typeId: 4)
-class GoalModel extends HiveObject {
-  @HiveField(0)
+class GoalModel {
   final String id;
-  
-  @HiveField(1)
   final String name;
-  
-  @HiveField(2)
   final double targetAmount;
-  
-  @HiveField(3)
   final double currentAmount;
-  
-  @HiveField(4)
   final DateTime? deadline;
-  
-  @HiveField(5)
   final String icon;
 
   GoalModel({
@@ -30,4 +14,26 @@ class GoalModel extends HiveObject {
     this.deadline,
     required this.icon,
   });
+
+  factory GoalModel.fromMap(Map<String, dynamic> map) {
+    return GoalModel(
+      id: map['id'],
+      name: map['name'],
+      targetAmount: (map['target_amount'] as num).toDouble(),
+      currentAmount: (map['current_amount'] as num).toDouble(),
+      deadline: map['deadline'] != null ? DateTime.parse(map['deadline']) : null,
+      icon: map['icon'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'target_amount': targetAmount,
+      'current_amount': currentAmount,
+      'deadline': deadline?.toIso8601String(),
+      'icon': icon,
+    };
+  }
 }

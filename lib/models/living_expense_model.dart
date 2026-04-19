@@ -1,61 +1,50 @@
-import 'package:hive/hive.dart';
-
-part 'living_expense_model.g.dart';
-
-@HiveType(typeId: 6)
-class CustomExpenseItem extends HiveObject {
-  @HiveField(0)
+class CustomExpenseItem {
   String id;
-
-  @HiveField(1)
   String name;
-
-  @HiveField(2)
   double amount;
+  String? livingExpenseId;
 
   CustomExpenseItem({
     required this.id,
     this.name = '',
     this.amount = 0.0,
+    this.livingExpenseId,
   });
+
+  factory CustomExpenseItem.fromMap(Map<String, dynamic> map) {
+    return CustomExpenseItem(
+      id: map['id'],
+      name: map['name'],
+      amount: (map['amount'] as num).toDouble(),
+      livingExpenseId: map['living_expense_id'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final map = {
+      'id': id,
+      'name': name,
+      'amount': amount,
+    };
+    if (livingExpenseId != null) {
+      map['living_expense_id'] = livingExpenseId!;
+    }
+    return map;
+  }
 }
 
-@HiveType(typeId: 5)
-class LivingExpenseModel extends HiveObject {
-  @HiveField(0)
+class LivingExpenseModel {
   final String id;
-
-  @HiveField(1)
   final DateTime month;
-
-  @HiveField(2)
   double rent;
-
-  @HiveField(3)
   double electricityPrevious;
-
-  @HiveField(4)
   double electricityCurrent;
-
-  @HiveField(5)
   double water;
-
-  @HiveField(6)
   double serviceFee;
-
-  @HiveField(7)
   double otherFees;
-
-  @HiveField(8)
   String? note;
-
-  @HiveField(9)
   double food;
-
-  @HiveField(10)
   double transport;
-
-  @HiveField(11)
   List<CustomExpenseItem> customExpenses;
 
   LivingExpenseModel({
@@ -78,7 +67,6 @@ class LivingExpenseModel extends HiveObject {
   double calculateElectricityCost() {
     double consumed = electricityConsumed;
     if (consumed <= 0) return 0.0;
-
     return consumed * 3500;
   }
 
@@ -95,8 +83,40 @@ class LivingExpenseModel extends HiveObject {
     if (serviceFee > 0) count++;
     if (food > 0) count++;
     if (transport > 0) count++;
-    
     count += customExpenses.where((e) => e.amount > 0).length;
     return count;
+  }
+
+  factory LivingExpenseModel.fromMap(Map<String, dynamic> map, {List<CustomExpenseItem> customExpenses = const []}) {
+    return LivingExpenseModel(
+      id: map['id'],
+      month: DateTime.parse(map['month']),
+      rent: (map['rent'] as num?)?.toDouble() ?? 0.0,
+      electricityPrevious: (map['electricity_previous'] as num?)?.toDouble() ?? 0.0,
+      electricityCurrent: (map['electricity_current'] as num?)?.toDouble() ?? 0.0,
+      water: (map['water'] as num?)?.toDouble() ?? 0.0,
+      serviceFee: (map['service_fee'] as num?)?.toDouble() ?? 0.0,
+      otherFees: (map['other_fees'] as num?)?.toDouble() ?? 0.0,
+      note: map['note'],
+      food: (map['food'] as num?)?.toDouble() ?? 0.0,
+      transport: (map['transport'] as num?)?.toDouble() ?? 0.0,
+      customExpenses: customExpenses,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'month': month.toIso8601String(),
+      'rent': rent,
+      'electricity_previous': electricityPrevious,
+      'electricity_current': electricityCurrent,
+      'water': water,
+      'service_fee': serviceFee,
+      'other_fees': otherFees,
+      'note': note,
+      'food': food,
+      'transport': transport,
+    };
   }
 }
