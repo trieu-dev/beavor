@@ -46,7 +46,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     } else {
       // Default selections for new transaction
       _setDefaultSelections();
-      
+
       // Listen for data loading if it was empty initially
       controller.categories.listen((_) {
         if (mounted && _selectedCategoryId == null) {
@@ -55,7 +55,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           });
         }
       });
-      
+
       controller.wallets.listen((_) {
         if (mounted && _selectedWalletId == null) {
           setState(() {
@@ -68,7 +68,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   void _setDefaultSelections() {
     if (controller.categories.isNotEmpty && _selectedCategoryId == null) {
-      final matched = controller.categories.where((c) => c.isIncome == _isIncome).toList();
+      final matched = controller.categories
+          .where((c) => c.isIncome == _isIncome)
+          .toList();
       if (matched.isNotEmpty) {
         _selectedCategoryId = matched.first.id;
       } else {
@@ -241,10 +243,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         decimal: false,
                       ),
                       validator: (val) {
-                        if (val == null || val.isEmpty)
+                        if (val == null || val.isEmpty) {
                           return 'form_error_amount'.tr;
-                        if (double.tryParse(val) == null)
+                        }
+                        if (double.tryParse(val) == null) {
                           return 'form_error_format'.tr;
+                        }
                         return null;
                       },
                     ),
@@ -341,69 +345,70 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           .where((c) => c.isIncome == _isIncome)
           .toList();
 
-    // +1 for the "Add New" button at the end
-    final itemCount = filteredCategories.length + 1;
+      // +1 for the "Add New" button at the end
+      final itemCount = filteredCategories.length + 1;
 
-    return SizedBox(
-      height: 100,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: itemCount,
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          // Last item is the "Add New" button
-          if (index == filteredCategories.length) {
-            return _buildAddCategoryButton();
-          }
+      return SizedBox(
+        height: 100,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: itemCount,
+          separatorBuilder: (context, index) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            // Last item is the "Add New" button
+            if (index == filteredCategories.length) {
+              return _buildAddCategoryButton();
+            }
 
-          final cat = filteredCategories[index];
-          final isSelected = _selectedCategoryId == cat.id;
+            final cat = filteredCategories[index];
+            final isSelected = _selectedCategoryId == cat.id;
 
-          return GestureDetector(
-            onTap: () => setState(() => _selectedCategoryId = cat.id),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 80,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Color(cat.colorValue).withValues(alpha: 0.2)
-                    : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
+            return GestureDetector(
+              onTap: () => setState(() => _selectedCategoryId = cat.id),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 80,
+                decoration: BoxDecoration(
                   color: isSelected
-                      ? Color(cat.colorValue)
-                      : Colors.white.withValues(alpha: 0.05),
-                  width: 2,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    IconMapper.getIconData(cat.icon),
+                      ? Color(cat.colorValue).withValues(alpha: 0.2)
+                      : AppColors.surfaceContainerLow.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
                     color: isSelected
                         ? Color(cat.colorValue)
-                        : AppColors.onSurfaceVariant,
+                        : Colors.white.withValues(alpha: 0.05),
+                    width: 2,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    cat.name.tr,
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: isSelected
-                          ? FontWeight.w700
-                          : FontWeight.w500,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      IconMapper.getIconData(cat.icon),
                       color: isSelected
-                          ? AppColors.onSurface
+                          ? Color(cat.colorValue)
                           : AppColors.onSurfaceVariant,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      cat.name.tr,
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.onSurface
+                            : AppColors.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     });
   }
