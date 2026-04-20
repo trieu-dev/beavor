@@ -6,9 +6,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
-import '../analysis/expense_analysis_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
-import '../living/living_expenses_screen.dart';
 import '../../controllers/living_expense_controller.dart';
 import '../../widgets/empty_transaction_state.dart';
 
@@ -16,7 +14,9 @@ class DashboardScreen extends StatelessWidget {
   DashboardScreen({super.key});
 
   final TransactionController controller = Get.put(TransactionController());
-  final LivingExpenseController livingController = Get.put(LivingExpenseController());
+  final LivingExpenseController livingController = Get.put(
+    LivingExpenseController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +32,6 @@ class DashboardScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 800),
@@ -60,10 +53,6 @@ class DashboardScreen extends StatelessWidget {
             children: [
               _buildWealthCard(context),
               const SizedBox(height: 32),
-              _buildSectionHeader('quick_actions'.tr),
-              const SizedBox(height: 16),
-              _buildQuickActions(),
-              const SizedBox(height: 32),
               _buildRecentTransactionsHeader(),
               const SizedBox(height: 16),
               _buildRecentTransactionsList(),
@@ -71,17 +60,6 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: GoogleFonts.manrope(
-        color: AppColors.onSurface,
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -258,66 +236,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildActionItem(
-          Icons.swap_vert_rounded,
-          'history'.tr,
-          () => Get.to(() => TransactionHistoryScreen()),
-        ),
-        _buildActionItem(
-          Icons.analytics_rounded,
-          'analysis'.tr,
-          () => Get.to(() => ExpenseAnalysisScreen()),
-        ),
-        _buildActionItem(
-          Icons.account_balance_wallet_rounded,
-          'wallets'.tr,
-          () {},
-        ),
-        _buildActionItem(
-          Icons.holiday_village_rounded,
-          'living_title'.tr,
-          () => Get.to(() => const LivingExpensesScreen()),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionItem(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            height: 64,
-            width: 64,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.05),
-                width: 1,
-              ),
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 28),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: AppColors.onSurfaceVariant,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildRecentTransactionsHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -378,7 +296,8 @@ class DashboardScreen extends StatelessWidget {
           final category = controller.getCategoryById(tx.categoryId);
 
           return GestureDetector(
-            onTap: () => Get.to(() => AddTransactionScreen(initialTransaction: tx)),
+            onTap: () =>
+                Get.to(() => AddTransactionScreen(initialTransaction: tx)),
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
