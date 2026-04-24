@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
@@ -83,7 +84,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
   List<Color> get _selectedGradient => _colorGradients[_selectedColorIndex];
 
   String _generateId() {
-    return 'cat_${DateTime.now().millisecondsSinceEpoch}';
+    return const Uuid().v4();
   }
 
   void _submit() {
