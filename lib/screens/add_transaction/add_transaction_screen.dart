@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
@@ -83,7 +84,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   String generateId() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
+    return const Uuid().v4();
   }
 
   @override

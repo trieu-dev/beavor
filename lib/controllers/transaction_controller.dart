@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../models/transaction_model.dart';
 import '../models/wallet_model.dart';
 import '../models/category_model.dart';
@@ -55,10 +56,12 @@ class TransactionController extends GetxController {
   }
 
   Future<void> _seedInitialData() async {
+    const uuid = Uuid();
+
     // 1. Wallets
     final walletsToSeed = [
       {
-        'id': 'w1',
+        'id': uuid.v4(),
         'name': 'Ví chính',
         'balance': 0,
         'color_value': 0xFF6366F1,
@@ -66,7 +69,7 @@ class TransactionController extends GetxController {
         'type': 'Cash',
       },
       {
-        'id': 'w2',
+        'id': uuid.v4(),
         'name': 'Ngân hàng',
         'balance': 0,
         'color_value': 0xFF10B981,
@@ -79,70 +82,70 @@ class TransactionController extends GetxController {
     // 2. Categories
     final categoriesToSeed = [
       {
-        'id': 'c1',
+        'id': uuid.v4(),
         'name': 'Ăn uống',
         'icon': 'restaurant',
         'color_value': 0xFFF59E0B,
         'is_income': false,
       },
       {
-        'id': 'c2',
+        'id': uuid.v4(),
         'name': 'Di chuyển',
         'icon': 'directions_car',
         'color_value': 0xFF3B82F6,
         'is_income': false,
       },
       {
-        'id': 'c3',
+        'id': uuid.v4(),
         'name': 'Mua sắm',
         'icon': 'shopping_bag',
         'color_value': 0xFFEC4899,
         'is_income': false,
       },
       {
-        'id': 'c4',
+        'id': uuid.v4(),
         'name': 'Giải trí',
         'icon': 'sports_esports',
         'color_value': 0xFF8B5CF6,
         'is_income': false,
       },
       {
-        'id': 'c5',
+        'id': uuid.v4(),
         'name': 'Nhà cửa',
         'icon': 'home',
         'color_value': 0xFF10B981,
         'is_income': false,
       },
       {
-        'id': 'c6',
+        'id': uuid.v4(),
         'name': 'Lương',
         'icon': 'payments',
         'color_value': 0xFF10B981,
         'is_income': true,
       },
       {
-        'id': 'c7',
+        'id': uuid.v4(),
         'name': 'Thưởng',
         'icon': 'redeem',
         'color_value': 0xFFF59E0B,
         'is_income': true,
       },
       {
-        'id': 'c8',
+        'id': uuid.v4(),
         'name': 'Sức khỏe',
         'icon': 'medical_services',
         'color_value': 0xFFEF4444,
         'is_income': false,
       },
       {
-        'id': 'c9',
+        'id': uuid.v4(),
         'name': 'Giáo dục',
         'icon': 'school',
         'color_value': 0xFF10B981,
         'is_income': false,
       },
       {
-        'id': 'c10',
+        'id': uuid.v4(),
         'name': 'Khác',
         'icon': 'more_horiz',
         'color_value': 0xFF6B7280,
