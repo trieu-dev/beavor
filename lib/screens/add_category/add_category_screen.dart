@@ -56,7 +56,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
   bool _isIncome = false;
 
   late AnimationController _animController;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -65,10 +64,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
-    );
-    _scaleAnimation = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOutBack,
     );
     _animController.forward();
   }
@@ -245,35 +240,32 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
   }
 
   Widget _buildPreviewCard() {
-    return ScaleTransition(
-      scale: _scaleAnimation,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Stack(
-          children: [
-            // Background mesh glow
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      _selectedGradient[0].withValues(alpha: 0.1),
-                      _selectedGradient[1].withValues(alpha: 0.05),
-                    ],
-                  ),
-                ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(color: Color(0xFF0F172A)),
+            ),
+          ),
+          ...AppColors.wealthCardMesh.map(
+            (g) => Positioned.fill(
+              child: Container(decoration: BoxDecoration(gradient: g)),
+            ),
+          ),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1.5,
               ),
             ),
-            // Content
-            Center(
+            child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -315,19 +307,11 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'add_cat_preview_subtitle'.tr,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.onSurfaceVariant,
-                    ),
-                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -478,8 +462,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color:
-                              _selectedGradient[0].withValues(alpha: 0.5),
+                          color: _selectedGradient[0].withValues(alpha: 0.5),
                           blurRadius: 15,
                           spreadRadius: 0,
                         ),
@@ -488,9 +471,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
               ),
               child: Icon(
                 IconMapper.getIconData(iconName),
-                color: isSelected
-                    ? Colors.white
-                    : AppColors.onSurfaceVariant,
+                color: isSelected ? Colors.white : AppColors.onSurfaceVariant,
                 size: 24,
               ),
             ),
