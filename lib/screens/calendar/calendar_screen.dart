@@ -48,33 +48,22 @@ class CalendarScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'nav_calendar'.tr,
-            style: GoogleFonts.manrope(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: AppColors.onSurface,
-              letterSpacing: -1,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLow,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-            ),
-            child: const Icon(Icons.notifications_none_rounded, color: AppColors.onSurface),
-          ),
-        ],
+      child: Text(
+        'nav_calendar'.tr,
+        style: GoogleFonts.manrope(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: AppColors.onSurface,
+          letterSpacing: -1,
+        ),
       ),
     );
   }
 
-  Widget _buildCalendarCard(CalendarController controller, TransactionController txController) {
+  Widget _buildCalendarCard(
+    CalendarController controller,
+    TransactionController txController,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -88,101 +77,131 @@ class CalendarScreen extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 20),
-            child: Obx(() => TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: controller.focusedDay.value,
-              selectedDayPredicate: (day) => controller.isSameDay(controller.selectedDay.value, day),
-              onDaySelected: controller.onDaySelected,
-              calendarFormat: CalendarFormat.month,
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: GoogleFonts.manrope(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.onSurface,
+            child: Obx(
+              () => TableCalendar(
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: controller.focusedDay.value,
+                selectedDayPredicate: (day) =>
+                    controller.isSameDay(controller.selectedDay.value, day),
+                onDaySelected: controller.onDaySelected,
+                calendarFormat: CalendarFormat.month,
+                headerStyle: HeaderStyle(
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                  titleTextStyle: GoogleFonts.manrope(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.onSurface,
+                  ),
+                  leftChevronIcon: const Icon(
+                    Icons.chevron_left_rounded,
+                    color: AppColors.primary,
+                  ),
+                  rightChevronIcon: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.primary,
+                  ),
                 ),
-                leftChevronIcon: const Icon(Icons.chevron_left_rounded, color: AppColors.primary),
-                rightChevronIcon: const Icon(Icons.chevron_right_rounded, color: AppColors.primary),
-              ),
-              daysOfWeekStyle: DaysOfWeekStyle(
-                weekdayStyle: GoogleFonts.inter(color: AppColors.onSurfaceVariant.withValues(alpha: 0.5), fontWeight: FontWeight.w600),
-                weekendStyle: GoogleFonts.inter(color: AppColors.onSurfaceVariant.withValues(alpha: 0.5), fontWeight: FontWeight.w600),
-              ),
-              calendarStyle: CalendarStyle(
-                defaultTextStyle: GoogleFonts.inter(color: AppColors.onSurface, fontWeight: FontWeight.w500),
-                weekendTextStyle: GoogleFonts.inter(color: AppColors.onSurface, fontWeight: FontWeight.w500),
-                outsideDaysVisible: false,
-                markersMaxCount: 1,
-              ),
-              calendarBuilders: CalendarBuilders(
-                selectedBuilder: (context, day, focusedDay) {
-                  return Container(
-                    margin: const EdgeInsets.all(6),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.4),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      '${day.day}',
-                      style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  );
-                },
-                markerBuilder: (context, date, events) {
-                  final transactions = txController.transactions.where((t) => controller.isSameDay(t.date, date)).toList();
-                  if (transactions.isNotEmpty) {
-                    final hasIncome = transactions.any((t) => t.isIncome);
-                    final hasExpense = transactions.any((t) => !t.isIncome);
-                    
-                    return Positioned(
-                      bottom: 8,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (hasIncome)
-                            Container(
-                              width: 5,
-                              height: 5,
-                              decoration: const BoxDecoration(
-                                color: AppColors.secondary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          if (hasIncome && hasExpense) const SizedBox(width: 2),
-                          if (hasExpense)
-                            Container(
-                              width: 5,
-                              height: 5,
-                              decoration: const BoxDecoration(
-                                color: AppColors.tertiary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: GoogleFonts.inter(
+                    color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  weekendStyle: GoogleFonts.inter(
+                    color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                calendarStyle: CalendarStyle(
+                  defaultTextStyle: GoogleFonts.inter(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  weekendTextStyle: GoogleFonts.inter(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  outsideDaysVisible: false,
+                  markersMaxCount: 1,
+                ),
+                calendarBuilders: CalendarBuilders(
+                  selectedBuilder: (context, day, focusedDay) {
+                    return Container(
+                      margin: const EdgeInsets.all(6),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.4),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
                         ],
                       ),
+                      child: Text(
+                        '${day.day}',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
-                  }
-                  return null;
-                },
+                  },
+                  markerBuilder: (context, date, events) {
+                    final transactions = txController.transactions
+                        .where((t) => controller.isSameDay(t.date, date))
+                        .toList();
+                    if (transactions.isNotEmpty) {
+                      final hasIncome = transactions.any((t) => t.isIncome);
+                      final hasExpense = transactions.any((t) => !t.isIncome);
+
+                      return Positioned(
+                        bottom: 8,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (hasIncome)
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.secondary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            if (hasIncome && hasExpense)
+                              const SizedBox(width: 2),
+                            if (hasExpense)
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.tertiary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+                    return null;
+                  },
+                ),
               ),
-            )),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAgendaSection(CalendarController controller, TransactionController txController) {
+  Widget _buildAgendaSection(
+    CalendarController controller,
+    TransactionController txController,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -191,16 +210,23 @@ class CalendarScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Obx(() => Text(
-                controller.isSameDay(controller.selectedDay.value, DateTime.now()) 
-                  ? 'calendar_agenda'.tr 
-                  : DateFormat('MMMM d, yyyy').format(controller.selectedDay.value!),
-                style: GoogleFonts.manrope(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.onSurface,
+              Obx(
+                () => Text(
+                  controller.isSameDay(
+                        controller.selectedDay.value,
+                        DateTime.now(),
+                      )
+                      ? 'calendar_agenda'.tr
+                      : DateFormat(
+                          'MMMM d, yyyy',
+                        ).format(controller.selectedDay.value!),
+                  style: GoogleFonts.manrope(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.onSurface,
+                  ),
                 ),
-              )),
+              ),
               Text(
                 'see_all'.tr,
                 style: GoogleFonts.inter(
@@ -220,7 +246,9 @@ class CalendarScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: Text(
                   'calendar_no_transactions'.tr,
-                  style: GoogleFonts.inter(color: AppColors.onSurfaceVariant.withValues(alpha: 0.5)),
+                  style: GoogleFonts.inter(
+                    color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
                 ),
               ),
             );
@@ -241,8 +269,12 @@ class CalendarScreen extends StatelessWidget {
   }
 
   Widget _buildDailySummaryCard(CalendarController controller) {
-    final currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
-    
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: '₫',
+      decimalDigits: 0,
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(20),
@@ -253,9 +285,22 @@ class CalendarScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildSummaryBox('income'.tr, currencyFormatter.format(controller.dailyIncome), AppColors.secondary),
-          Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.05), margin: const EdgeInsets.symmetric(horizontal: 20)),
-          _buildSummaryBox('expenses'.tr, currencyFormatter.format(controller.dailyExpense), AppColors.tertiary),
+          _buildSummaryBox(
+            'income'.tr,
+            currencyFormatter.format(controller.dailyIncome),
+            AppColors.secondary,
+          ),
+          Container(
+            width: 1,
+            height: 40,
+            color: Colors.white.withValues(alpha: 0.05),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+          ),
+          _buildSummaryBox(
+            'expenses'.tr,
+            currencyFormatter.format(controller.dailyExpense),
+            AppColors.tertiary,
+          ),
         ],
       ),
     );
@@ -291,9 +336,16 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(TransactionModel tx, TransactionController txController) {
+  Widget _buildTransactionItem(
+    TransactionModel tx,
+    TransactionController txController,
+  ) {
     final category = txController.getCategoryById(tx.categoryId);
-    final currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: '₫',
+      decimalDigits: 0,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -308,7 +360,9 @@ class CalendarScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Color(category?.colorValue ?? 0xFF6366F1).withValues(alpha: 0.1),
+              color: Color(
+                category?.colorValue ?? 0xFF6366F1,
+              ).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
