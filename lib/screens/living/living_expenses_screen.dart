@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/living_expense_controller.dart';
-import '../../core/theme/app_colors.dart';
 
 class LivingExpensesScreen extends GetView<LivingExpenseController> {
   const LivingExpensesScreen({super.key});
@@ -53,20 +52,6 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
           fontSize: 20,
         ),
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-            child: const Icon(
-              Icons.person_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
