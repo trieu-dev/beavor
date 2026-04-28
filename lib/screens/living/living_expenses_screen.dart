@@ -189,7 +189,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: EdgeInsets.only(left: 8, right: 8),
                   ),
                   controller: TextEditingController(text: item.name)
                     ..selection = TextSelection.fromPosition(
@@ -213,7 +213,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
                     suffixStyle: TextStyle(color: Colors.white54, fontSize: 14),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: EdgeInsets.only(left: 8, right: 8),
                   ),
                   controller:
                       TextEditingController(
