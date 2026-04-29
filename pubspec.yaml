@@ -45,6 +45,9 @@ dependencies:
   uuid: 4.5.1
   supabase_flutter: ^2.12.4
   flutter_dotenv: ^6.0.0
+  dio: ^5.9.2
+  package_info_plus: ^10.1.0
+  open_filex: ^4.7.0
 
 dev_dependencies:
   flutter_test:

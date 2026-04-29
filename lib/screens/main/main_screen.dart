@@ -8,7 +8,7 @@ import '../analysis/expense_analysis_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../living/living_expenses_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
-
+import '../../services/update_service.dart';
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -18,6 +18,15 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final updateService = Get.put(UpdateService());
+      updateService.checkForUpdate(context);
+    });
+  }
 
   final List<Widget> _screens = [
     DashboardScreen(),
