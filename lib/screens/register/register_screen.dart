@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/theme/app_colors.dart';
-import '../login/login_screen.dart';
+import '../../controllers/auth_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -16,6 +16,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
+
+  // Use existing AuthController
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void dispose() {
@@ -47,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
-          
+
           // Mesh glows
           Positioned(
             top: -50,
@@ -71,15 +74,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Back button
                   IconButton(
                     onPressed: () => Get.back(),
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 20,
+                    ),
                     style: IconButton.styleFrom(
                       backgroundColor: AppColors.surfaceContainerLow,
                       padding: const EdgeInsets.all(12),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Welcome Text
                   Text(
                     'Bắt đầu hành trình',
@@ -92,14 +98,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: AppColors.onSurfaceVariant,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Form Fields
-                  Text(
-                    'Họ và tên',
-                    style: theme.textTheme.labelLarge,
-                  ),
+                  Text('Họ và tên', style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _nameController,
@@ -108,13 +111,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       prefixIcon: Icon(Icons.person_outline_rounded, size: 20),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
-                  Text(
-                    'Email',
-                    style: theme.textTheme.labelLarge,
-                  ),
+
+                  Text('Email', style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _emailController,
@@ -124,23 +124,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
-                  Text(
-                    'Mật khẩu',
-                    style: theme.textTheme.labelLarge,
-                  ),
+
+                  Text('Mật khẩu', style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       hintText: '••••••••',
-                      prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
+                      prefixIcon: const Icon(
+                        Icons.lock_outline_rounded,
+                        size: 20,
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           size: 20,
                         ),
                         onPressed: () {
@@ -151,9 +153,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Terms and conditions
                   Row(
                     children: [
@@ -198,24 +200,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Register Button
                   SizedBox(
                     width: double.infinity,
                     height: 56,
-                    child: ElevatedButton(
-                      onPressed: _agreeToTerms ? () {
-                        // Handle registration
-                        Get.back();
-                      } : null,
-                      child: const Text('Đăng ký'),
+                    child: Obx(
+                      () => ElevatedButton(
+                        onPressed:
+                            (_agreeToTerms && !_authController.isLoading.value)
+                            ? () => _authController.register(
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                                _nameController.text.trim(),
+                              )
+                            : null,
+                        child: _authController.isLoading.value
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('Đăng ký'),
+                      ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Login link
                   Center(
                     child: Row(
