@@ -7,7 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/i18n/app_translations.dart';
 import 'core/services/supabase_service.dart';
 import 'screens/login/login_screen.dart';
-import 'screens/main/main_screen.dart';
+import 'controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +16,9 @@ void main() async {
   final supabaseUrl = dotenv.env['SUPABASE_URL']!;
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
   await SupabaseService().init(url: supabaseUrl, anonKey: supabaseAnonKey);
+
+  // Initialize AuthController
+  Get.put(AuthController());
 
   runApp(const LuminousLedgerApp());
 }
