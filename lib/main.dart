@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/theme/app_theme.dart';
 import 'core/i18n/app_translations.dart';
 import 'core/services/supabase_service.dart';
+import 'screens/login/login_screen.dart';
 import 'screens/main/main_screen.dart';
 
 void main() async {
@@ -40,7 +41,7 @@ class LuminousLedgerApp extends StatelessWidget {
         Locale('vi', 'VN'), // Vietnamese
       ],
       theme: AppTheme.darkTheme,
-      home: const MainScreen(),
+      home: const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
