@@ -29,7 +29,7 @@ class LuminousLedgerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Luminous Ledger',
+      title: 'Beavor',
       translations: AppTranslations(),
       locale: const Locale('vi', 'VN'), // Default to Vietnamese
       fallbackLocale: const Locale('en', 'US'), // English as fallback
