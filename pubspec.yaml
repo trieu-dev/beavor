@@ -112,3 +112,10 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/beavor.png"
   min_sdk_android: 21
+  web:
+    generate: true
+  windows:
+    generate: true
+  macos:
+    generate: true
+  remove_alpha_ios: true
