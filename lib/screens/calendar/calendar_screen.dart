@@ -34,7 +34,7 @@ class CalendarScreen extends StatelessWidget {
                     _buildCalendarCard(controller, txController),
                     const SizedBox(height: 24),
                     _buildAgendaSection(controller, txController),
-                    const SizedBox(height: 100), // Space for bottom bar
+                    const SizedBox(height: 120), // Space for bottom bar
                   ],
                 ),
               ),

@@ -31,7 +31,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
               _buildExpenseList(exp),
               const SizedBox(height: 32),
               _buildSaveButton(),
-              const SizedBox(height: 40),
+              const SizedBox(height: 120),
             ],
           ),
         );
