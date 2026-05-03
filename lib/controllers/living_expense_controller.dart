@@ -121,6 +121,7 @@ class LivingExpenseController extends GetxController {
     }
   }
 
+
   void _updateCurrent(LivingExpenseModel Function(LivingExpenseModel) updater) {
     if (currentExpense.value != null) {
       currentExpense.value = updater(currentExpense.value!);
