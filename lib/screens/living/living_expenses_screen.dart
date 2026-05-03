@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/living_expense_controller.dart';
+import 'share_summary_screen.dart';
 
 class LivingExpensesScreen extends GetView<LivingExpenseController> {
   const LivingExpensesScreen({super.key});
@@ -11,33 +12,36 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
     return Scaffold(
       backgroundColor: const Color(0xFF0B101B),
       appBar: _buildAppBar(),
-      body: Obx(() {
-        if (controller.currentExpense.value == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: Container(
+        color: const Color(0xFF0B101B),
+        child: Obx(() {
+          if (controller.currentExpense.value == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        final exp = controller.currentExpense.value!;
-        final total = exp.calculateTotal();
+          final exp = controller.currentExpense.value!;
+          final total = exp.calculateTotal();
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSummaryCard(total),
-              const SizedBox(height: 32),
-              _buildSectionHeader(),
-              const SizedBox(height: 16),
-              _buildExpenseList(exp),
-              const SizedBox(height: 32),
-              _buildSaveButton(),
-              const SizedBox(height: 120),
-            ],
-          ),
-        );
-      }),
-    );
-  }
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSummaryCard(total),
+                const SizedBox(height: 32),
+                _buildSectionHeader(),
+                const SizedBox(height: 16),
+                _buildExpenseList(exp),
+                const SizedBox(height: 32),
+                _buildSaveButton(),
+                const SizedBox(height: 120),
+              ],
+            ),
+          );
+        }),
+      ),
+  );
+}
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -46,12 +50,20 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
       centerTitle: true,
       title: Text(
         'living_monthly_ledger'.tr,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFF9489FE),
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () => Get.to(() => const ShareSummaryScreen()),
+          icon: const Icon(Icons.ios_share_rounded, color: Color(0xFF9489FE)),
+          tooltip: 'living_export'.tr,
+        ),
+        const SizedBox(width: 8),
+      ],
     );
   }
 
