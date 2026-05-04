@@ -108,8 +108,9 @@ class AppTranslations extends Translations {
       'add_cat_default_name': 'Food & Drink',
       'add_cat_preview_subtitle': '0 ₫ this month',
       'add_cat_short': 'Add new',
-      'living_summary_preview': 'Preview Summary',
-      'living_confirm_share': 'Confirm & Share',
+      'living_summary_preview': 'Export Preview',
+      'living_confirm_share': 'Confirm & Export',
+      'living_tx_save_success': 'Transaction saved to "Housing"',
       'living_export': 'Export',
     },
     'vi_VN': {
@@ -217,8 +218,9 @@ class AppTranslations extends Translations {
       'add_cat_default_name': 'Ăn uống',
       'add_cat_preview_subtitle': '0 ₫ trong tháng này',
       'add_cat_short': 'Thêm mới',
-      'living_summary_preview': 'Xem trước tổng hợp',
-      'living_confirm_share': 'Xác nhận & Chia sẻ',
+      'living_summary_preview': 'Xem trước bản xuất',
+      'living_confirm_share': 'Xác nhận & Xuất',
+      'living_tx_save_success': 'Đã lưu giao dịch vào mục "Nhà cửa"',
       'living_export': 'Xuất dữ liệu',
     },
   };

@@ -7,7 +7,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
 import '../../controllers/living_expense_controller.dart';
+import '../../controllers/transaction_controller.dart';
+import '../../models/transaction_model.dart';
 
 class ShareSummaryScreen extends StatefulWidget {
   const ShareSummaryScreen({super.key});
@@ -25,7 +28,6 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
   Future<void> _captureAndShare() async {
     setState(() => _isCapturing = true);
     try {
-      // Small delay to ensure any UI updates or focus shifts are settled
       await Future.delayed(const Duration(milliseconds: 100));
 
       final RenderRepaintBoundary? boundary =
@@ -48,6 +50,8 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
         await imageFile.writeAsBytes(pngBytes);
 
         await SharePlus.instance.share(ShareParams(files: [XFile(imagePath)]));
+
+        await _saveAsTransaction();
       }
     } catch (e) {
       Get.printError(info: 'Error capturing and sharing: $e');
@@ -58,6 +62,56 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
       );
     } finally {
       setState(() => _isCapturing = false);
+    }
+  }
+
+  Future<void> _saveAsTransaction() async {
+    try {
+      final transactionController = Get.find<TransactionController>();
+      final exp = controller.currentExpense.value;
+      if (exp == null) return;
+
+      final total = exp.calculateTotal();
+      final now = DateTime.now();
+      final monthYear = DateFormat('MM/yyyy').format(now);
+
+      final category = transactionController.categories.firstWhereOrNull(
+        (c) => c.name == 'Nhà cửa',
+      );
+
+      final wallet =
+          transactionController.wallets.firstWhereOrNull(
+            (w) => w.name == 'Ví chính',
+          ) ??
+          transactionController.wallets.firstOrNull;
+
+      if (category == null || wallet == null) {
+        Get.printError(info: 'Category or Wallet not found for auto-saving');
+        return;
+      }
+
+      final transaction = TransactionModel(
+        id: const Uuid().v4(),
+        title: 'Tiền nhà - $monthYear',
+        amount: total,
+        date: now,
+        isIncome: false,
+        categoryId: category.id,
+        walletId: wallet.id,
+        note: 'Auto-generated from Living Expense Export',
+      );
+
+      await transactionController.addTransaction(transaction);
+
+      Get.snackbar(
+        'success'.tr,
+        'living_tx_save_success'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.1),
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.printError(info: 'Error auto-saving transaction: $e');
     }
   }
 
