@@ -30,6 +30,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   DateTime _selectedDate = DateTime.now();
   String? _selectedCategoryId;
   String? _selectedWalletId;
+  double? _amount;
 
   bool get _isEditing => widget.initialTransaction != null;
 
@@ -237,12 +238,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     const SizedBox(height: 20),
 
                     _buildGlassInput(
-                      controller: _amountController,
+                      controller:
+                          TextEditingController(
+                              text: (_amount == 0 || _amount == null)
+                                  ? ''
+                                  : NumberFormat('#,###').format(_amount),
+                            )
+                            ..selection = TextSelection.fromPosition(
+                              TextPosition(
+                                offset:
+                                    ((_amount == 0 || _amount == null)
+                                            ? ''
+                                            : NumberFormat(
+                                                '#,###',
+                                              ).format(_amount))
+                                        .length,
+                              ),
+                            ),
                       label: '${'form_amount'.tr} (₫)',
                       icon: Icons.payments_rounded,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: false,
-                      ),
+                      keyboardType: TextInputType.number,
                       validator: (val) {
                         if (val == null || val.isEmpty) {
                           return 'form_error_amount'.tr;
@@ -251,6 +266,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           return 'form_error_format'.tr;
                         }
                         return null;
+                      },
+                      onChanged: (v) {
+                        final valueDoub = _parseDouble(v);
+                        setState(() {
+                          _amount = valueDoub;
+                        });
                       },
                     ),
                     const SizedBox(height: 24),
@@ -296,6 +317,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     required IconData icon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    Function(String)? onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,12 +354,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   ),
                   errorStyle: const TextStyle(height: 0),
                 ),
+                onChanged: onChanged,
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  double _parseDouble(String v) {
+    if (v.isEmpty) return 0.0;
+    return double.tryParse(v.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
   }
 
   Widget _buildCategoryPicker() {
