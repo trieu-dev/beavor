@@ -53,7 +53,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
 
   String _selectedIcon = _availableIcons[0];
   int _selectedColorIndex = 0;
-  bool _isIncome = false;
+  final bool _isIncome = false;
 
   late AnimationController _animController;
 
@@ -194,12 +194,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
                   _buildSectionLabel('add_cat_name_label'.tr),
                   const SizedBox(height: 12),
                   _buildNameInput(),
-                  const SizedBox(height: 32),
-
-                  // Type Toggle (Income/Expense)
-                  _buildSectionLabel('add_cat_type_label'.tr),
-                  const SizedBox(height: 12),
-                  _buildTypeToggle(),
                   const SizedBox(height: 32),
 
                   // Icon Grid
@@ -353,71 +347,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen>
               ),
               fillColor: Colors.transparent,
               filled: true,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTypeToggle() {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: Row(
-        children: [
-          _buildToggleItem(
-            label: 'add_tx_expense'.tr,
-            isSelected: !_isIncome,
-            activeColor: AppColors.tertiary,
-            onTap: () => setState(() => _isIncome = false),
-          ),
-          _buildToggleItem(
-            label: 'add_tx_income'.tr,
-            isSelected: _isIncome,
-            activeColor: AppColors.secondary,
-            onTap: () => setState(() => _isIncome = true),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleItem({
-    required String label,
-    required bool isSelected,
-    required Color activeColor,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? activeColor.withValues(alpha: 0.2)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-            border: isSelected
-                ? Border.all(color: activeColor.withValues(alpha: 0.3))
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: GoogleFonts.manrope(
-                color: isSelected
-                    ? activeColor
-                    : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                fontSize: 15,
-              ),
             ),
           ),
         ),
