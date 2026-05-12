@@ -224,9 +224,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildTypeToggle(),
-                    const SizedBox(height: 32),
-
                     _buildGlassInput(
                       controller: _titleController,
                       label: 'form_title'.tr,
@@ -571,87 +568,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTypeToggle() {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: Row(
-        children: [
-          _buildToggleItem(
-            label: 'add_tx_expense'.tr,
-            isSelected: !_isIncome,
-            activeColor: AppColors.tertiary,
-            onTap: () {
-              setState(() {
-                _isIncome = false;
-                // Re-select first expense category
-                _selectedCategoryId = controller.categories
-                    .firstWhere((c) => !c.isIncome)
-                    .id;
-              });
-            },
-          ),
-          _buildToggleItem(
-            label: 'add_tx_income'.tr,
-            isSelected: _isIncome,
-            activeColor: AppColors.secondary,
-            onTap: () {
-              setState(() {
-                _isIncome = true;
-                // Re-select first income category
-                _selectedCategoryId = controller.categories
-                    .firstWhere((c) => c.isIncome)
-                    .id;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleItem({
-    required String label,
-    required bool isSelected,
-    required Color activeColor,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? activeColor.withValues(alpha: 0.2)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-            border: isSelected
-                ? Border.all(color: activeColor.withValues(alpha: 0.3))
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: GoogleFonts.manrope(
-                color: isSelected
-                    ? activeColor
-                    : AppColors.onSurfaceVariant.withValues(alpha: 0.5),
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                fontSize: 15,
-              ),
-            ),
           ),
         ),
       ),
