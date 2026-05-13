@@ -8,7 +8,7 @@ A premium, glassmorphic financial management application designed for visual exc
 - **✍️ Atomic Transaction Management**: Seamlessly add, edit, or delete transactions. The engine ensures balance integrity across all wallets using robust revert-and-apply logic.
 - **📊 Intuitive Spending Analysis**: Interactive donut charts and time-series trend analysis (Weekly/Monthly) powered by `fl_chart`.
 - **🇻🇳 Multi-Language Support**: Complete localization for English (US) and Vietnamese (VN) to support global financial journeys.
-- **⚡ High-Performance Offline Engine**: Robust local persistence layer using **Hive** for near-instant data operations.
+- **☁️ Cloud-Backed Data**: Persistent storage and authentication through **Supabase** (PostgreSQL), so your ledgers stay consistent across devices when you are signed in.
 
 ## 🎨 Design Philosophy
 Luminous Ledger prioritizes **Visual Excellence**. Avoid generic colors and boring lists. The app uses:
@@ -19,8 +19,11 @@ Luminous Ledger prioritizes **Visual Excellence**. Avoid generic colors and bori
 ## 🛠️ Technology Stack
 - **Framework**: [Flutter](https://flutter.dev)
 - **State Management**: [GetX](https://pub.dev/packages/get)
-- **Local Database**: [Hive](https://pub.dev/packages/hive)
+- **Backend & Auth**: [Supabase Flutter](https://pub.dev/packages/supabase_flutter)
 - **Charts**: [fl_chart](https://pub.dev/packages/fl_chart)
+- **Calendar**: [table_calendar](https://pub.dev/packages/table_calendar)
+- **HTTP**: [dio](https://pub.dev/packages/dio) (e.g. in-app update metadata)
+- **Configuration**: [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)
 - **Fonts**: [Google Fonts (Manrope, Inter)](https://fonts.google.com/)
 
 ---
@@ -28,19 +31,25 @@ Luminous Ledger prioritizes **Visual Excellence**. Avoid generic colors and bori
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK (Latest Stable)
+- Flutter SDK (latest stable)
 - Dart SDK
+- A [Supabase](https://supabase.com/) project with tables and auth configured for this app
+- A root `.env` file (not committed) with at least:
+  - `SUPABASE_URL`
+  - `SUPABASE_ANON_KEY`
+  - Optional: `UPDATE_METADATA_URL` for custom update checks
 
 ### Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/trieu-dev/luminous_ledger.git
    ```
-2. Fetch dependencies:
+2. Add your `.env` in the project root with the variables above.
+3. Fetch dependencies:
    ```bash
    flutter pub get
    ```
-3. Run the application:
+4. Run the application:
    ```bash
    flutter run
    ```
