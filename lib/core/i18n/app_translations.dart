@@ -112,6 +112,10 @@ class AppTranslations extends Translations {
       'living_confirm_share': 'Confirm & Export',
       'living_tx_save_success': 'Transaction saved to "Housing"',
       'living_export': 'Export',
+      'shortcut_add_tx': 'Add',
+      'shortcut_budget': 'Budget',
+      'shortcut_split_bill': 'Split Bill',
+      'shortcut_reports': 'Reports',
     },
     'vi_VN': {
       'app_title': 'Luminous Ledger',
@@ -222,6 +226,10 @@ class AppTranslations extends Translations {
       'living_confirm_share': 'Xác nhận & Xuất',
       'living_tx_save_success': 'Đã lưu giao dịch vào mục "Nhà cửa"',
       'living_export': 'Xuất dữ liệu',
+      'shortcut_add_tx': 'Thêm',
+      'shortcut_budget': 'Dự toán',
+      'shortcut_split_bill': 'Chia bill',
+      'shortcut_reports': 'Báo cáo',
     },
   };
 }
