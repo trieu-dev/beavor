@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +9,9 @@ import '../../core/theme/app_colors.dart';
 import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
+import '../living/living_expenses_screen.dart';
+import '../living/split_bill_screen.dart';
+import '../analysis/expense_analysis_screen.dart';
 import '../../controllers/living_expense_controller.dart';
 import '../../widgets/empty_transaction_state.dart';
 
@@ -52,6 +57,8 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildWealthCard(context),
+              const SizedBox(height: 24),
+              _buildQuickShortcuts(context),
               const SizedBox(height: 32),
               _buildRecentTransactionsHeader(),
               const SizedBox(height: 16),
@@ -236,6 +243,103 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildQuickShortcuts(BuildContext context) {
+    final shortcuts = [
+      _ShortcutItem(
+        icon: Icons.add_rounded,
+        label: 'shortcut_add_tx'.tr,
+        onTap: () => Get.to(() => const AddTransactionScreen()),
+      ),
+      _ShortcutItem(
+        icon: Icons.account_balance_wallet_rounded,
+        label: 'shortcut_budget'.tr,
+        onTap: () => Get.to(() => LivingExpensesScreen()),
+      ),
+      _ShortcutItem(
+        icon: Icons.receipt_long_rounded,
+        label: 'shortcut_split_bill'.tr,
+        onTap: () => Get.to(() => const SplitBillScreen()),
+      ),
+      _ShortcutItem(
+        icon: Icons.insert_chart_rounded,
+        label: 'shortcut_reports'.tr,
+        onTap: () => Get.to(() => ExpenseAnalysisScreen()),
+      ),
+    ];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: shortcuts.map((item) {
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildShortcutButton(item),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildShortcutButton(_ShortcutItem item) {
+    return GestureDetector(
+      onTap: item.onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerLow.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.06),
+                width: 0.5,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0x33818CF8), // primary at 20%
+                        Color(0x1A6366F1), // primaryDim at 10%
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    item.icon,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  item.label,
+                  style: GoogleFonts.inter(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildRecentTransactionsHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -386,4 +490,16 @@ class DashboardScreen extends StatelessWidget {
       );
     });
   }
+}
+
+class _ShortcutItem {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ShortcutItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 }
