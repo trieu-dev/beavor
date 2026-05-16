@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../members/members_list_screen.dart';
 
 class SplitBillScreen extends StatelessWidget {
   const SplitBillScreen({super.key});
@@ -23,6 +24,8 @@ class SplitBillScreen extends StatelessWidget {
               // TODO: Implement edit logic
             },
           ),
+          const SizedBox(height: 16),
+          _buildMembersButton(),
           const SizedBox(height: 16),
           _buildBillGroupCard(
             title: 'Cafe (Nhóm 5 người mời)',
@@ -60,6 +63,70 @@ class SplitBillScreen extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMembersButton() {
+    return GestureDetector(
+      onTap: () => Get.to(() => const MembersListScreen()),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF161C2C),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: const Color(0xFF9489FE).withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF9489FE), Color(0xFF7B66FF)],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.people_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Danh sách thành viên',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Quản lý thành viên trong nhóm',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xFF9489FE),
+              size: 24,
+            ),
+          ],
         ),
       ),
     );
