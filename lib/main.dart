@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:get_storage/get_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'core/i18n/app_translations.dart';
 import 'core/services/supabase_service.dart';
@@ -12,6 +13,7 @@ import 'controllers/auth_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await GetStorage.init();
 
   final supabaseUrl = dotenv.env['SUPABASE_URL']!;
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
