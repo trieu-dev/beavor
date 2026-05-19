@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:luminous_ledger/models/bill_model.dart';
 import '../members/members_list_screen.dart';
 
-class SplitBillScreen extends StatelessWidget {
+class SplitBillScreen extends StatefulWidget {
   const SplitBillScreen({super.key});
+
+  @override
+  State<SplitBillScreen> createState() => _SplitBillScreenState();
+}
+
+class _SplitBillScreenState extends State<SplitBillScreen> {
+  BillModel? bill;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +44,7 @@ class SplitBillScreen extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          _createNewBillSection(),
+          if (bill != null) _createNewBillSection(bill!),
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -45,7 +54,11 @@ class SplitBillScreen extends StatelessWidget {
             width: double.infinity,
             height: 60,
             child: ElevatedButton(
-              onPressed: () => _showCreateGroupModal(context),
+              onPressed: () {
+                setState(() {
+                  bill = BillModel.def();
+                });
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF9489FE),
                 foregroundColor: Colors.white,
@@ -65,7 +78,12 @@ class SplitBillScreen extends StatelessWidget {
     );
   }
 
-  Widget _createNewBillSection() {
+  double _parseDouble(String v) {
+    if (v.isEmpty) return 0;
+    return double.parse(v.replaceAll(',', ''));
+  }
+
+  Widget _createNewBillSection(BillModel item) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -113,13 +131,70 @@ class SplitBillScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'living_amount_hint'.tr,
+                    hintStyle: TextStyle(color: Colors.white24, fontSize: 18),
+                    suffixText: '₫',
+                    suffixStyle: TextStyle(color: Colors.white54, fontSize: 14),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                  controller:
+                      TextEditingController(
+                          text: item.amount == 0
+                              ? ''
+                              : NumberFormat('#,###').format(item.amount),
+                        )
+                        ..selection = TextSelection.fromPosition(
+                          TextPosition(
+                            offset:
+                                (item.amount == 0
+                                        ? ''
+                                        : NumberFormat(
+                                            '#,###',
+                                          ).format(item.amount))
+                                    .length,
+                          ),
+                        ),
+                  onChanged: (v) {
+                    setState(() {
+                      item.amount = _parseDouble(v);
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: const Color(0xFF9489FE),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  Get.to(() => const MembersListScreen());
+                },
+                child: Text("Người trả"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           // Member Selection Button
           GestureDetector(
-            onTap: () {
-              // TODO: Navigate to member selection
-              Get.back();
-              Get.to(() => const MembersListScreen());
-            },
+            onTap: () => Get.to(() => const MembersListScreen()),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -190,156 +265,6 @@ class SplitBillScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
         ],
-      ),
-    );
-  }
-
-  void _showCreateGroupModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: const BoxDecoration(
-            color: Color(0xFF161C2C),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 48,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Tạo nhóm mới',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Chọn những người cùng chia hóa đơn\nChọn tối thiểu 2 người để bắt đầu',
-                style: TextStyle(color: Colors.white54, fontSize: 14),
-              ),
-              const SizedBox(height: 24),
-              // Group Name Input
-              TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Tên nhóm (Vd: Du lịch Đà Lạt)',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.3),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFF0B101B),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.groups_rounded,
-                    color: Color(0xFF9489FE),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Member Selection Button
-              GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to member selection
-                  Get.back();
-                  Get.to(() => const MembersListScreen());
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0B101B),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(
-                            0xFF9489FE,
-                          ).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.person_add_rounded,
-                          color: Color(0xFF9489FE),
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Expanded(
-                        child: Text(
-                          'Thêm thành viên',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: Colors.white54,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Create Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement actual create logic
-                    Get.back();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF9489FE),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Tạo nhóm',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
       ),
     );
   }
