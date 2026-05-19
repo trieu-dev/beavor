@@ -1,30 +1,28 @@
-import 'package:luminous_ledger/models/shared_bill_user_model.dart';
-
 class BillModel {
   final int id;
   final String name;
   double amount;
-  final List<SharedBillUserModel> users;
+  final List<int> userIds;
   final int whoPaid;
 
   BillModel({
     required this.id,
     required this.name,
     required this.amount,
-    required this.users,
+    required this.userIds,
     required this.whoPaid,
   });
 
   factory BillModel.def() =>
-      BillModel(id: 0, name: '', amount: 0, users: [], whoPaid: 0);
+      BillModel(id: 0, name: '', amount: 0, userIds: [], whoPaid: 0);
 
   factory BillModel.fromMap(Map<String, dynamic> map) {
     return BillModel(
       id: map['id'],
       name: map['name'],
       amount: (map['amount'] as num).toDouble(),
-      users: map['users'] != null
-          ? map['users'].map((x) => SharedBillUserModel.fromJson(x)).toList()
+      userIds: map['userIds'] != null
+          ? map['userIds'].map((x) => x).toList()
           : [],
       whoPaid: map['whoPaid'],
     );
@@ -35,7 +33,7 @@ class BillModel {
       'id': id,
       'name': name,
       'amount': amount,
-      'users': users,
+      'userIds': userIds,
       'whoPaid': whoPaid,
     };
   }
