@@ -276,6 +276,7 @@ class CalendarScreen extends StatelessWidget {
     );
 
     return Container(
+      width: Get.width,
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -283,43 +284,29 @@ class CalendarScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
-      child: Row(
-        children: [
-          _buildSummaryBox(
-            'income'.tr,
-            currencyFormatter.format(controller.dailyIncome),
-            AppColors.secondary,
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.white.withValues(alpha: 0.05),
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-          ),
-          _buildSummaryBox(
-            'expenses'.tr,
-            currencyFormatter.format(controller.dailyExpense),
-            AppColors.tertiary,
-          ),
-        ],
+      child: _buildSummaryBox(
+        'expenses'.tr,
+        currencyFormatter.format(controller.dailyExpense),
+        AppColors.tertiary,
       ),
     );
   }
 
   Widget _buildSummaryBox(String label, String amount, Color color) {
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
-              fontWeight: FontWeight.w600,
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
