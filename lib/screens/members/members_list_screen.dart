@@ -6,7 +6,7 @@ import '../../core/theme/app_colors.dart';
 
 /// Member data model for the list
 class Member {
-  final String id;
+  final int id;
   final String name;
   final String contact; // email or phone
   final Color avatarColor;
@@ -28,6 +28,58 @@ class Member {
   }
 }
 
+// Sample data matching the Stitch mockup
+  final List<Member> allMembers = const [
+    Member(
+      id: 1,
+      name: 'Nguyễn Văn An',
+      contact: 'an.nguyen@email.com',
+      avatarColor: Color(0xFF818CF8),
+    ),
+    Member(
+      id: 2,
+      name: 'Trần Thị Bình',
+      contact: '0912 345 678',
+      avatarColor: Color(0xFF34D399),
+    ),
+    Member(
+      id: 3,
+      name: 'Lê Hoàng Cường',
+      contact: 'cuong.le@email.com',
+      avatarColor: Color(0xFFFB7185),
+    ),
+    Member(
+      id: 4,
+      name: 'Phạm Minh Đức',
+      contact: '0987 654 321',
+      avatarColor: Color(0xFFF59E0B),
+    ),
+    Member(
+      id: 5,
+      name: 'Hoàng Thị Em',
+      contact: 'em.hoang@email.com',
+      avatarColor: Color(0xFF06B6D4),
+    ),
+    Member(
+      id: 6,
+      name: 'Võ Đình Phúc',
+      contact: '0901 234 567',
+      avatarColor: Color(0xFFA78BFA),
+    ),
+    Member(
+      id: 7,
+      name: 'Đặng Ngọc Quỳnh',
+      contact: 'quynh.dang@email.com',
+      avatarColor: Color(0xFF2DD4BF),
+    ),
+    Member(
+      id: 8,
+      name: 'Bùi Thanh Hà',
+      contact: '0978 123 456',
+      avatarColor: Color(0xFFFF6B6B),
+    ),
+  ];
+
 class MembersListScreen extends StatefulWidget {
   const MembersListScreen({super.key});
 
@@ -38,58 +90,7 @@ class MembersListScreen extends StatefulWidget {
 class _MembersListScreenState extends State<MembersListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final RxString _searchQuery = ''.obs;
-
-  // Sample data matching the Stitch mockup
-  final List<Member> _allMembers = const [
-    Member(
-      id: '1',
-      name: 'Nguyễn Văn An',
-      contact: 'an.nguyen@email.com',
-      avatarColor: Color(0xFF818CF8),
-    ),
-    Member(
-      id: '2',
-      name: 'Trần Thị Bình',
-      contact: '0912 345 678',
-      avatarColor: Color(0xFF34D399),
-    ),
-    Member(
-      id: '3',
-      name: 'Lê Hoàng Cường',
-      contact: 'cuong.le@email.com',
-      avatarColor: Color(0xFFFB7185),
-    ),
-    Member(
-      id: '4',
-      name: 'Phạm Minh Đức',
-      contact: '0987 654 321',
-      avatarColor: Color(0xFFF59E0B),
-    ),
-    Member(
-      id: '5',
-      name: 'Hoàng Thị Em',
-      contact: 'em.hoang@email.com',
-      avatarColor: Color(0xFF06B6D4),
-    ),
-    Member(
-      id: '6',
-      name: 'Võ Đình Phúc',
-      contact: '0901 234 567',
-      avatarColor: Color(0xFFA78BFA),
-    ),
-    Member(
-      id: '7',
-      name: 'Đặng Ngọc Quỳnh',
-      contact: 'quynh.dang@email.com',
-      avatarColor: Color(0xFF2DD4BF),
-    ),
-    Member(
-      id: '8',
-      name: 'Bùi Thanh Hà',
-      contact: '0978 123 456',
-      avatarColor: Color(0xFFFF6B6B),
-    ),
-  ];
+  final List<int> selectedIds = [];
 
   @override
   void dispose() {
@@ -98,9 +99,9 @@ class _MembersListScreenState extends State<MembersListScreen> {
   }
 
   List<Member> get _filteredMembers {
-    if (_searchQuery.value.isEmpty) return _allMembers;
+    if (_searchQuery.value.isEmpty) return allMembers;
     final query = _searchQuery.value.toLowerCase();
-    return _allMembers
+    return allMembers
         .where(
           (m) =>
               m.name.toLowerCase().contains(query) ||
@@ -123,6 +124,24 @@ class _MembersListScreenState extends State<MembersListScreen> {
             _buildMemberCount(),
             const SizedBox(height: 4),
             Expanded(child: _buildMemberList()),
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Implement actual create logic
+                Get.back<List<int>>(result: selectedIds);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF9489FE),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Chọn',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ).paddingAll(8.0)
           ],
         ),
       ),
@@ -369,29 +388,55 @@ class _MembersListScreenState extends State<MembersListScreen> {
 
   // ── Avatar with ambient glow ─────────────────────────────────────────
   Widget _buildAvatar(Member member) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: member.avatarColor.withValues(alpha: 0.3),
-            blurRadius: 16,
-            spreadRadius: 2,
-          ),
-        ],
+    return IconButton(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.zero)
       ),
-      child: CircleAvatar(
-        radius: 24,
-        backgroundColor: member.avatarColor.withValues(alpha: 0.2),
-        child: Text(
-          member.initials,
-          style: GoogleFonts.manrope(
-            color: member.avatarColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
+      onPressed: () {
+        setState(() {
+          selectedIds.contains(member.id) ? selectedIds.remove(member.id) : selectedIds.add(member.id);
+        });
+      },
+      icon: selectedIds.contains(member.id) ? Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF9489FE).withValues(alpha: 0.3),
+              blurRadius: 16,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: Color(0xFF9489FE).withValues(alpha: 0.2),
+          child: Icon(Icons.check)
+        ),
+      ) : Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: member.avatarColor.withValues(alpha: 0.3),
+              blurRadius: 16,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: CircleAvatar(
+          radius: 24,
+          backgroundColor: member.avatarColor.withValues(alpha: 0.2),
+          child: Text(
+            member.initials,
+            style: GoogleFonts.manrope(
+              color: member.avatarColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 

@@ -13,6 +13,7 @@ class SplitBillScreen extends StatefulWidget {
 
 class _SplitBillScreenState extends State<SplitBillScreen> {
   BillModel? bill;
+  List<BillModel> bills = [];
 
   @override
   Widget build(BuildContext context) {
@@ -184,14 +185,24 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
                   ),
                   elevation: 0,
                 ),
-                onPressed: () {
-                  Get.to(() => const MembersListScreen());
+                onPressed: () async {
+                  final ids = await Get.to<dynamic>(() => const MembersListScreen());
+                  if (ids is List<int> && ids.isNotEmpty){
+                    item.whoPaid = ids[0];
+                    setState(() { });
+                  }
                 },
                 child: Text("Người trả"),
               ),
             ],
           ),
           const SizedBox(height: 16),
+          ...item.whoPaid == 0
+            ? []
+            : [
+                Text(allMembers.firstWhereOrNull((x) => x.id == item.whoPaid)?.name ?? ""),
+                const SizedBox(height: 16)
+              ],
           // Member Selection Button
           GestureDetector(
             onTap: () => Get.to(() => const MembersListScreen()),
@@ -258,7 +269,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
                 elevation: 0,
               ),
               child: const Text(
-                'Tạo nhóm',
+                'Lưu',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),

@@ -3,7 +3,7 @@ class BillModel {
   final String name;
   double amount;
   final List<int> userIds;
-  final int whoPaid;
+  int whoPaid;
 
   BillModel({
     required this.id,
