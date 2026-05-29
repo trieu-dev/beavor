@@ -24,7 +24,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
 
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
@@ -40,7 +39,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (_isEditing) {
       final tx = widget.initialTransaction!;
       _titleController.text = tx.title;
-      _amountController.text = tx.amount.toInt().toString();
+      _amount  = tx.amount;
       _isIncome = tx.isIncome;
       _selectedDate = tx.date;
       _selectedCategoryId = tx.categoryId;
@@ -91,7 +90,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   void dispose() {
     _titleController.dispose();
-    _amountController.dispose();
     super.dispose();
   }
 
@@ -108,12 +106,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         return;
       }
 
-      final double amount = double.tryParse(_amountController.text) ?? 0.0;
-
       final transaction = TransactionModel(
         id: _isEditing ? widget.initialTransaction!.id : generateId(),
         title: _titleController.text,
-        amount: amount,
+        amount: _amount??0,
         date: _selectedDate,
         isIncome: _isIncome,
         categoryId: _selectedCategoryId!,
@@ -259,7 +255,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         if (val == null || val.isEmpty) {
                           return 'form_error_amount'.tr;
                         }
-                        if (double.tryParse(val) == null) {
+                        if (_parseDouble(val) == 0) {
                           return 'form_error_format'.tr;
                         }
                         return null;

@@ -133,7 +133,7 @@ class AppTranslations extends Translations {
       'members_opt_remove': 'Remove Member',
     },
     'vi_VN': {
-      'app_title': 'Luminous Ledger',
+      'app_title': 'Beavor',
       'nav_home': 'Trang chủ',
       'nav_calendar': 'Lịch',
       'nav_analysis': 'Phân tích',
@@ -150,7 +150,7 @@ class AppTranslations extends Translations {
       'see_all': 'Tất cả',
       'no_recent_transactions': 'Chưa có giao dịch nào',
       'empty_state_title': 'Chưa có dữ liệu',
-      'empty_state_welcome': 'Chào mừng đến với Luminous Ledger!',
+      'empty_state_welcome': 'Chào mừng đến với Beavor!',
       'empty_state_desc':
           'Bắt đầu hành trình tài chính bằng cách thêm giao dịch đầu tiên.',
       'empty_state_tip_title': 'Mẹo tài chính',
