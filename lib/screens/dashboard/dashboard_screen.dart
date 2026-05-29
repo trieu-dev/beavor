@@ -106,54 +106,21 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'net_worth'.tr,
-                      style: GoogleFonts.inter(
-                        color: AppColors.onSurfaceVariant,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.trending_up,
-                            size: 14,
-                            color: AppColors.secondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '+0%', // Static for now, can be computed later
-                            style: GoogleFonts.inter(
-                              color: AppColors.secondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                Text(
+                  'expenses'.tr,
+                  style: GoogleFonts.inter(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Obx(
                   () => FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      currencyFormatter.format(controller.totalBalance),
+                      currencyFormatter.format(controller.totalExpense),
                       style: GoogleFonts.manrope(
                         color: AppColors.onSurface,
                         fontSize: 40,
@@ -163,79 +130,7 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Obx(
-                        () => _buildTrendInfo(
-                          'income'.tr,
-                          currencyFormatter.format(controller.totalIncome),
-                          AppColors.secondary,
-                          Icons.arrow_downward_rounded,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      width: 1,
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                    Expanded(
-                      child: Obx(
-                        () => _buildTrendInfo(
-                          'expenses'.tr,
-                          currencyFormatter.format(controller.totalExpense),
-                          AppColors.tertiary,
-                          Icons.arrow_upward_rounded,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendInfo(
-    String label,
-    String amount,
-    Color color,
-    IconData icon,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 12, color: AppColors.onSurfaceVariant),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: GoogleFonts.inter(
-                  color: AppColors.onSurfaceVariant,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              amount,
-              style: GoogleFonts.manrope(
-                color: AppColors.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
             ),
           ),
         ],
