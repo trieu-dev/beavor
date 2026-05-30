@@ -6,15 +6,13 @@ import '../../core/theme/app_colors.dart';
 
 /// Member data model for the list
 class Member {
-  final int id;
+  final String id;
   final String name;
-  final String contact; // email or phone
   final Color avatarColor;
 
   const Member({
     required this.id,
     required this.name,
-    required this.contact,
     required this.avatarColor,
   });
 
@@ -29,59 +27,131 @@ class Member {
 }
 
 // Sample data matching the Stitch mockup
-  final List<Member> allMembers = const [
-    Member(
-      id: 1,
-      name: 'Nguyễn Văn An',
-      contact: 'an.nguyen@email.com',
-      avatarColor: Color(0xFF818CF8),
-    ),
-    Member(
-      id: 2,
-      name: 'Trần Thị Bình',
-      contact: '0912 345 678',
-      avatarColor: Color(0xFF34D399),
-    ),
-    Member(
-      id: 3,
-      name: 'Lê Hoàng Cường',
-      contact: 'cuong.le@email.com',
-      avatarColor: Color(0xFFFB7185),
-    ),
-    Member(
-      id: 4,
-      name: 'Phạm Minh Đức',
-      contact: '0987 654 321',
-      avatarColor: Color(0xFFF59E0B),
-    ),
-    Member(
-      id: 5,
-      name: 'Hoàng Thị Em',
-      contact: 'em.hoang@email.com',
-      avatarColor: Color(0xFF06B6D4),
-    ),
-    Member(
-      id: 6,
-      name: 'Võ Đình Phúc',
-      contact: '0901 234 567',
-      avatarColor: Color(0xFFA78BFA),
-    ),
-    Member(
-      id: 7,
-      name: 'Đặng Ngọc Quỳnh',
-      contact: 'quynh.dang@email.com',
-      avatarColor: Color(0xFF2DD4BF),
-    ),
-    Member(
-      id: 8,
-      name: 'Bùi Thanh Hà',
-      contact: '0978 123 456',
-      avatarColor: Color(0xFFFF6B6B),
-    ),
-  ];
+final List<Member> allMembers = [
+  Member(
+    id: '1',
+    name: 'Linh Trinh',
+    avatarColor: Color(0xFF818CF8),
+  ),
+  Member(
+    id: '2',
+    name: 'Trang Le',
+    avatarColor: Color(0xFF34D399),
+  ),
+  Member(
+    id: '3',
+    name: 'Vu Vo',
+    avatarColor: Color(0xFFFB7185),
+  ),
+  Member(
+    id: '4',
+    name: 'Huy Nguyen',
+    avatarColor: Color(0xFFF59E0B),
+  ),
+  Member(
+    id: '5',
+    name: 'Toan Nguyen',
+    avatarColor: Color(0xFF06B6D4),
+  ),
+  Member(
+    id: '6',
+    name: 'Khang Bui',
+    avatarColor: Color(0xFFA78BFA),
+  ),
+  Member(
+    id: '7',
+    name: 'Tri Vu',
+    avatarColor: Color(0xFF2DD4BF),
+  ),
+  Member(
+    id: '8',
+    name: 'Trieu Le',
+    avatarColor: Color(0xFFFF6B6B),
+  ),
+  Member(
+    id: '9',
+    name: 'Huy Tran',
+    avatarColor: Color(0xFF818CF8),
+  ),
+  Member(
+    id: '10',
+    name: 'Minh Vu',
+    avatarColor: Color(0xFF34D399),
+  ),
+  Member(
+    id: '11',
+    name: 'Quang Tran',
+    avatarColor: Color(0xFFFB7185),
+  ),
+  Member(
+    id: '12',
+    name: 'Hoang Tran',
+    avatarColor: Color(0xFFF59E0B),
+  ),
+  Member(
+    id: '13',
+    name: 'Khoa Vo',
+    avatarColor: Color(0xFF06B6D4),
+  ),
+  Member(
+    id: '14',
+    name: 'Duy Le',
+    avatarColor: Color(0xFFA78BFA),
+  ),
+  Member(
+    id: '15',
+    name: 'Nam Tran',
+    avatarColor: Color(0xFF2DD4BF),
+  ),
+  Member(
+    id: '16',
+    name: 'Hiep Lam',
+    avatarColor: Color(0xFFFF6B6B),
+  ),
+  Member(
+    id: '17',
+    name: 'Phong Phan',
+    avatarColor: Color(0xFF34D399),
+  ),
+  Member(
+    id: '18',
+    name: 'Vu Pham',
+    avatarColor: Color(0xFFFB7185),
+  ),
+  Member(
+    id: '19',
+    name: 'Thy Nguyen',
+    avatarColor: Color(0xFFF59E0B),
+  ),
+  Member(
+    id: '20',
+    name: 'Tien Vu',
+    avatarColor: Color(0xFF06B6D4),
+  ),
+  Member(
+    id: '21',
+    name: 'Tuyen Dinh',
+    avatarColor: Color(0xFFA78BFA),
+  ),
+  Member(
+    id: '22',
+    name: 'Mai Pho',
+    avatarColor: Color(0xFF2DD4BF),
+  ),
+  Member(
+    id: '23',
+    name: 'Hau Tran',
+    avatarColor: Color(0xFFFF6B6B),
+  ),
+];
+
+List<String> getNames(List<String> ids) {
+  return allMembers.where((m) => ids.contains(m.id)).map((x) => x.name).toList();
+}
 
 class MembersListScreen extends StatefulWidget {
-  const MembersListScreen({super.key});
+  final List<String> selectedIds;
+  const MembersListScreen({super.key, required this.selectedIds});
 
   @override
   State<MembersListScreen> createState() => _MembersListScreenState();
@@ -90,7 +160,18 @@ class MembersListScreen extends StatefulWidget {
 class _MembersListScreenState extends State<MembersListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final RxString _searchQuery = ''.obs;
-  final List<int> selectedIds = [];
+  late List<String> selectedIds = [];
+  late List<Member> members = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedIds = widget.selectedIds;
+
+    members = allMembers;
+    members.sort((a,b) => a.name.compareTo(b.name));
+  }
 
   @override
   void dispose() {
@@ -99,13 +180,12 @@ class _MembersListScreenState extends State<MembersListScreen> {
   }
 
   List<Member> get _filteredMembers {
-    if (_searchQuery.value.isEmpty) return allMembers;
+    if (_searchQuery.value.isEmpty) return members;
     final query = _searchQuery.value.toLowerCase();
-    return allMembers
+    return members
         .where(
           (m) =>
-              m.name.toLowerCase().contains(query) ||
-              m.contact.toLowerCase().contains(query),
+              m.name.toLowerCase().contains(query)
         )
         .toList();
   }
@@ -126,8 +206,7 @@ class _MembersListScreenState extends State<MembersListScreen> {
             Expanded(child: _buildMemberList()),
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement actual create logic
-                Get.back<List<int>>(result: selectedIds);
+                Get.back<List<String>>(result: selectedIds);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF9489FE),
@@ -141,12 +220,12 @@ class _MembersListScreenState extends State<MembersListScreen> {
                 'Chọn',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            ).paddingAll(8.0)
+            ).paddingAll(16.0)
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(),
-      bottomNavigationBar: _buildBottomNav(),
+      // floatingActionButton: _buildFAB(),
+      // bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -177,15 +256,15 @@ class _MembersListScreenState extends State<MembersListScreen> {
               ),
             ),
           ),
-          IconButton(
-            onPressed: _showAddMemberDialog,
-            icon: const Icon(Icons.person_add_rounded),
-            color: AppColors.primary,
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-              padding: const EdgeInsets.all(12),
-            ),
-          ),
+          // IconButton(
+          //   onPressed: _showAddMemberDialog,
+          //   icon: const Icon(Icons.person_add_rounded),
+          //   color: AppColors.primary,
+          //   style: IconButton.styleFrom(
+          //     backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+          //     padding: const EdgeInsets.all(12),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -339,44 +418,14 @@ class _MembersListScreenState extends State<MembersListScreen> {
                 const SizedBox(width: 16),
                 // Name & Contact
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        member.name,
-                        style: GoogleFonts.manrope(
-                          color: AppColors.onSurface,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        member.contact,
-                        style: GoogleFonts.inter(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Options icon
-                IconButton(
-                  onPressed: () => _showMemberOptions(member),
-                  icon: const Icon(Icons.more_vert_rounded),
-                  color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
-                  iconSize: 20,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 36,
-                    minHeight: 36,
-                  ),
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColors.surfaceContainer.withValues(
-                      alpha: 0.5,
+                  child: Text(
+                    member.name,
+                    style: GoogleFonts.manrope(
+                      color: AppColors.onSurface,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
                     ),
-                  ),
+                  )
                 ),
               ],
             ),
@@ -402,7 +451,7 @@ class _MembersListScreenState extends State<MembersListScreen> {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Color(0xFF9489FE).withValues(alpha: 0.3),
+              color: Color(0xFF9489FE),
               blurRadius: 16,
               spreadRadius: 2,
             ),
@@ -410,7 +459,7 @@ class _MembersListScreenState extends State<MembersListScreen> {
         ),
         child: CircleAvatar(
           radius: 24,
-          backgroundColor: Color(0xFF9489FE).withValues(alpha: 0.2),
+          backgroundColor: Color(0xFF9489FE),
           child: Icon(Icons.check)
         ),
       ) : Container(
@@ -701,15 +750,7 @@ class _MembersListScreenState extends State<MembersListScreen> {
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          member.contact,
-                          style: GoogleFonts.inter(
-                            color: AppColors.onSurfaceVariant,
-                            fontSize: 13,
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ],
