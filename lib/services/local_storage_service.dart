@@ -1,5 +1,5 @@
 import 'package:get_storage/get_storage.dart';
-import '../models/bill_model.dart';
+import '../models/expense.dart';
 import '../models/shared_bill_user_model.dart';
 
 class LocalStorageService {
@@ -10,18 +10,18 @@ class LocalStorageService {
 
   // --- Bills ---
   
-  List<BillModel> getBills() {
+  List<Expense> getBills() {
     final List<dynamic>? data = _box.read(_billsKey);
     if (data == null) return [];
-    return data.map((item) => BillModel.fromMap(Map<String, dynamic>.from(item))).toList();
+    return data.map((item) => Expense.fromMap(Map<String, dynamic>.from(item))).toList();
   }
 
-  Future<void> saveBills(List<BillModel> bills) async {
+  Future<void> saveBills(List<Expense> bills) async {
     final data = bills.map((bill) => bill.toMap()).toList();
     await _box.write(_billsKey, data);
   }
 
-  Future<void> addBill(BillModel bill) async {
+  Future<void> addBill(Expense bill) async {
     final bills = getBills();
     bills.add(bill);
     await saveBills(bills);
