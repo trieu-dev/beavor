@@ -10,7 +10,7 @@ import '../../controllers/transaction_controller.dart';
 import '../transaction_history/transaction_history_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
 import '../living/living_expenses_screen.dart';
-import '../living/split_bill_screen.dart';
+import '../expense_splitter/split_bill_screen.dart';
 import '../analysis/expense_analysis_screen.dart';
 import '../../controllers/living_expense_controller.dart';
 import '../../widgets/empty_transaction_state.dart';
