@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luminous_ledger/models/expense.dart';
+import 'package:luminous_ledger/models/member.dart';
 import 'package:luminous_ledger/screens/members/members_list_screen.dart';
 
 class NewExpenseSection extends StatefulWidget {
