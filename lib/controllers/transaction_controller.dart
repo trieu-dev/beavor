@@ -14,16 +14,31 @@ class TransactionController extends GetxController {
   var categories = <CategoryModel>[].obs;
   var isLoading = false.obs;
 
+  // Date range for transaction loading (default: current month)
+  late final Rx<DateTime> dateRangeStart;
+  late final Rx<DateTime> dateRangeEnd;
+
   // Selected Timeframe for Analysis
   var selectedTimeframe = 'Weekly'.obs;
 
   @override
   void onInit() {
     super.onInit();
+    final now = DateTime.now();
+    dateRangeStart = DateTime(now.year, now.month, 1).obs;
+    dateRangeEnd = DateTime(now.year, now.month + 1, 1)
+        .subtract(const Duration(milliseconds: 1))
+        .obs;
     loadData();
   }
 
-  Future<void> loadData() async {
+  /// Loads data for the given [startDate]–[endDate] range.
+  /// If omitted, uses the currently stored [dateRangeStart]/[dateRangeEnd].
+  Future<void> loadData({DateTime? startDate, DateTime? endDate}) async {
+    // Update stored range if new values are provided
+    if (startDate != null) dateRangeStart.value = startDate;
+    if (endDate != null) dateRangeEnd.value = endDate;
+
     isLoading.value = true;
     try {
       // 1. Fetch Categories
@@ -40,10 +55,12 @@ class TransactionController extends GetxController {
       final walletData = await _client.from('wallets').select();
       wallets.assignAll(walletData.map((e) => WalletModel.fromMap(e)).toList());
 
-      // 3. Fetch Transactions
+      // 3. Fetch Transactions filtered by date range
       final transactionData = await _client
           .from('transactions')
           .select()
+          .gte('date', dateRangeStart.value.toIso8601String())
+          .lte('date', dateRangeEnd.value.toIso8601String())
           .order('date', ascending: false);
       transactions.assignAll(
         transactionData.map((e) => TransactionModel.fromMap(e)).toList(),
@@ -54,6 +71,10 @@ class TransactionController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  /// Convenience method: update the date range and reload in one call.
+  Future<void> setDateRange(DateTime start, DateTime end) =>
+      loadData(startDate: start, endDate: end);
 
   Future<void> _seedInitialData() async {
     const uuid = Uuid();
