@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luminous_ledger/core/theme/app_colors.dart';
 import 'package:luminous_ledger/models/expense.dart';
+import 'package:luminous_ledger/models/member.dart';
 import 'package:luminous_ledger/screens/expense_splitter/new_expense_section.dart';
+import 'package:luminous_ledger/screens/expense_splitter/split_result_table.dart';
 import 'package:luminous_ledger/services/expense_splitter.dart';
 import '../members/members_list_screen.dart';
 
@@ -18,6 +20,7 @@ class SplitBillScreen extends StatefulWidget {
 class _SplitBillScreenState extends State<SplitBillScreen> {
   Expense? newExpense;
   List<Expense> bills = [];
+  SplitResult? result;
 
   @override
   Widget build(BuildContext context) {
@@ -27,33 +30,32 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
         title: const Text('Chia hóa đơn nhóm'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          _buildMembersButton()
+        ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: PageView(
         children: [
-          // _buildBillGroupCard(
-          //   title: 'Tiền xe (3 xe)',
-          //   subtitle: 'Minh Tú, Lan Anh, Hoàng Long đã trả',
-          //   onEdit: () {
-          //     // TODO: Implement edit logic
-          //   },
-          // ),
-          // const SizedBox(height: 16),
-          _buildMembersButton(),
-          ...bills.map(_buildBillGroupCard),
-          const SizedBox(height: 16),
-          if (newExpense != null) NewExpenseSection(
-            onSave: (item) {
-              setState(() {
-                bills.add(item);
-              });
-            },
-            onCancel: () {
-              setState(() {
-                newExpense = null;
-              });
-            },
+          ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              ...bills.map(_buildBillGroupCard),
+              const SizedBox(height: 16),
+              if (newExpense != null) NewExpenseSection(
+                onSave: (item) {
+                  setState(() {
+                    bills.add(item);
+                  });
+                },
+                onCancel: () {
+                  setState(() {
+                    newExpense = null;
+                  });
+                },
+              ),
+            ],
           ),
+          result == null ? Center(child: Text("No data")) : SplitResultTable(result: result!)
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -68,16 +70,27 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF9489FE),
+                  backgroundColor: Colors.transparent,
+                  // backgroundColor: const Color(0xFF9489FE),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: Color(0xFF9489FE)
+                    )
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'Tạo nhóm mới',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, color: Color(0xFF9489FE)),
+                    SizedBox(width: 8),
+                    Text(
+                      'Nhóm',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF9489FE)),
+                    )
+                  ],
                 ),
               )),
               SizedBox(width: 16,),
@@ -90,6 +103,10 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
 
                   print('\n=== Payers settle among themselves ===');
                   for (final s in result.payerSettlements) print(s);
+
+                  setState(() {
+                    this.result = result;
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF9489FE),
@@ -121,61 +138,22 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
     return GestureDetector(
       onTap: () => Get.to(() => MembersListScreen(selectedIds: [])),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: const Color(0xFF161C2C),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFF9489FE).withValues(alpha: 0.15),
             width: 1,
           ),
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF9489FE), Color(0xFF7B66FF)],
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.people_rounded,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Danh sách thành viên',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Quản lý thành viên trong nhóm',
-                    style: TextStyle(color: Colors.white54, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Color(0xFF9489FE),
-              size: 24,
-            ),
-          ],
-        ),
+        child: Icon(
+          Icons.people_rounded,
+          color: Colors.white,
+          size: 24,
+        )
       ),
-    );
+    ).marginOnly(right: 20);
   }
 
   Widget _buildBillGroupCard(Expense item) {
@@ -258,6 +236,6 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           ),
         ],
       ),
-    ).marginOnly(top: 20);
+    ).marginOnly(bottom: 20);
   }
 }
