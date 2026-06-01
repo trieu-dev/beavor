@@ -5,20 +5,34 @@ import 'package:luminous_ledger/models/expense.dart';
 import 'package:luminous_ledger/models/member.dart';
 import 'package:luminous_ledger/screens/members/members_list_screen.dart';
 
-class NewExpenseSection extends StatefulWidget {
+class SplitExpenseEditor extends StatefulWidget {
   final Function(Expense) onSave;
   final Function() onCancel;
-  const NewExpenseSection({super.key, required this.onSave, required this.onCancel});
+  final Expense? item;
+  const SplitExpenseEditor({super.key, required this.onSave, required this.onCancel, this.item});
 
   @override
-  State<NewExpenseSection> createState() => _NewExpenseSectionState();
+  State<SplitExpenseEditor> createState() => _SplitExpenseEditorState();
 }
 
-class _NewExpenseSectionState extends State<NewExpenseSection> {
+class _SplitExpenseEditorState extends State<SplitExpenseEditor> {
   final TextEditingController titleCtrl = TextEditingController();
   double amount = 0;
   String payerId = '';
   List<String> participantIds = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if (widget.item != null) {
+      amount = widget.item!.amount;
+      payerId = widget.item!.payerId;
+      participantIds = widget.item!.participantIds;
+      titleCtrl.text = widget.item!.title;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +272,7 @@ class _NewExpenseSectionState extends State<NewExpenseSection> {
     return ElevatedButton(
       onPressed: () {
         widget.onSave(Expense(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          id: widget.item?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
           title: titleCtrl.text,
           amount: amount,
           payerId: payerId,

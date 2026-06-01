@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:luminous_ledger/core/theme/app_colors.dart';
 import 'package:luminous_ledger/models/expense.dart';
 import 'package:luminous_ledger/models/member.dart';
-import 'package:luminous_ledger/screens/expense_splitter/new_expense_section.dart';
+import 'package:luminous_ledger/screens/expense_splitter/split_expense_editor.dart';
 import 'package:luminous_ledger/screens/expense_splitter/split_result_table.dart';
 import 'package:luminous_ledger/services/expense_splitter.dart';
 import '../members/members_list_screen.dart';
@@ -40,8 +40,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             padding: const EdgeInsets.all(20),
             children: [
               ...bills.map(_buildBillGroupCard),
-              const SizedBox(height: 16),
-              if (newExpense != null) NewExpenseSection(
+              if (newExpense != null) SplitExpenseEditor(
                 onSave: (item) {
                   setState(() {
                     bills.add(item);
@@ -156,7 +155,30 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
     ).marginOnly(right: 20);
   }
 
+  List<String> edittingIds = [];
+
   Widget _buildBillGroupCard(Expense item) {
+    return edittingIds.contains(item.id)
+    ? SplitExpenseEditor(
+        onSave: (item) {
+          int index = bills.indexWhere((o) => o.id == item.id);
+          if (index >= 0) {
+            bills[index] = item;
+          }
+          edittingIds.remove(item.id);
+          setState(() { });
+        },
+        onCancel: () {
+          setState(() {
+            edittingIds.remove(item.id);
+          });
+        },
+        item: item.clone(),
+      ).marginOnly(bottom: 20)
+    : _buildBillGroupCardViewer(item).marginOnly(bottom: 20);
+
+  }
+  Widget _buildBillGroupCardViewer(Expense item) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -223,7 +245,11 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           ),
           const SizedBox(width: 12),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                edittingIds.add(item.id);
+              });
+            },
             icon: const Icon(
               Icons.edit_rounded,
               color: Colors.white54,
@@ -236,6 +262,6 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           ),
         ],
       ),
-    ).marginOnly(bottom: 20);
+    );
   }
 }

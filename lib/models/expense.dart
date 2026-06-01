@@ -18,6 +18,8 @@ class Expense {
 
   double get sharePerPerson => amount / participantIds.length;
 
+  Expense clone() => Expense.fromMap(toMap());
+
   @override
   String toString() => '$payerId → $title - $amount - ${participantIds.join(', ')}';
 
@@ -27,7 +29,7 @@ class Expense {
       title: map['title'],
       amount: (map['amount'] as num).toDouble(),
       participantIds: map['participantIds'] != null
-          ? map['participantIds'].map((x) => x).toList()
+          ? List<String>.from(map['participantIds'].map((x) => x))
           : [],
       payerId: map['payerId'],
     );

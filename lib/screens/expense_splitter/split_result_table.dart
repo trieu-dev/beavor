@@ -22,8 +22,8 @@ class SplitResultTable extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _resultTable(result.payerSettlements).marginOnly(bottom: 20),
-            _resultTable(result.nonPayerSettlements)
+            if (result.payerSettlements.isNotEmpty) _resultTable(result.payerSettlements).marginOnly(bottom: 20),
+            if (result.nonPayerSettlements.isNotEmpty) _resultTable(result.nonPayerSettlements)
           ],
         )
       )
