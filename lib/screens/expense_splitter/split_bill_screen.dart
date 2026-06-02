@@ -169,15 +169,21 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           : SwipeableCard(
               item: item,
               onDuplicate: () {
-            
+                int index = bills.indexWhere((o) => o.id == item.id);
+                if (index < 0) return;
+
+                final cloned = item.clone();
+                cloned.id = DateTime.now().millisecondsSinceEpoch.toString();
+                bills.insert(index, cloned);
+                setState(() { });
               },
               onEdit: () {
-                setState(() {
-                  edittingIds.add(item.id);
-                });
+                edittingIds.add(item.id);
+                setState(() { });
               },
               onRemove: () {
-                
+                bills.removeWhere((o) => o.id == item.id);
+                setState(() { });
               },
             ).marginOnly(bottom: 20);
 
