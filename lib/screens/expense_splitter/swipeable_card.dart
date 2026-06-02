@@ -22,48 +22,42 @@ class SwipeableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-      child: Slidable(
-        key: ValueKey(item.id),
+    return Slidable(
+      key: ValueKey(item.id),
 
-        // Swipe from RIGHT → shows actions on the right side
-        endActionPane: ActionPane(
-          motion: const BehindMotion(), // or DrawerMotion, ScrollMotion, StretchMotion
-          extentRatio: 0.75, // how much of the card the actions take up
-          children: [
-            // Duplicate
-            SlidableAction(
-              onPressed: (_) => onDuplicate(),
-              backgroundColor: const Color(0xFF4A90D9),
-              foregroundColor: Colors.white,
-              icon: Icons.copy_rounded,
-              label: 'Duplicate',
-              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
-            ),
-            // Edit
-            SlidableAction(
-              onPressed: (_) => onEdit(),
-              backgroundColor: const Color(0xFF7B61FF),
-              foregroundColor: Colors.white,
-              icon: Icons.edit_rounded,
-              label: 'Edit',
-            ),
-            // Remove
-            SlidableAction(
-              onPressed: (_) => onRemove(),
-              backgroundColor: const Color(0xFFE05C5C),
-              foregroundColor: Colors.white,
-              icon: Icons.delete_rounded,
-              label: 'Remove',
-              borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
-            ),
-          ],
-        ),
-
-        // The card itself
-        child: _CardContent(item: item),
+      // Swipe from RIGHT → shows actions on the right side
+      endActionPane: ActionPane(
+        motion: const BehindMotion(), // or DrawerMotion, ScrollMotion, StretchMotion
+        extentRatio: 0.75, // how much of the card the actions take up
+        children: [
+          // Duplicate
+          SlidableAction(
+            onPressed: (_) => onDuplicate(),
+            backgroundColor: const Color(0xFF4A90D9),
+            foregroundColor: Colors.white,
+            icon: Icons.copy_rounded,
+            borderRadius: const BorderRadius.horizontal(left: Radius.circular(20)),
+          ),
+          // Edit
+          SlidableAction(
+            onPressed: (_) => onEdit(),
+            backgroundColor: const Color(0xFF7B61FF),
+            foregroundColor: Colors.white,
+            icon: Icons.edit_rounded,
+          ),
+          // Remove
+          SlidableAction(
+            onPressed: (_) => onRemove(),
+            backgroundColor: const Color(0xFFE05C5C),
+            foregroundColor: Colors.white,
+            icon: Icons.delete_rounded,
+            borderRadius: const BorderRadius.horizontal(right: Radius.circular(20)),
+          ),
+        ],
       ),
+
+      // The card itself
+      child: _CardContent(item: item),
     );
   }
 }
