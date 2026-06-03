@@ -1,6 +1,6 @@
 import 'package:get_storage/get_storage.dart';
+import 'package:luminous_ledger/models/member.dart';
 import '../models/expense.dart';
-import '../models/shared_bill_user_model.dart';
 
 class LocalStorageService {
   final _box = GetStorage();
@@ -29,18 +29,18 @@ class LocalStorageService {
 
   // --- Users ---
   
-  List<SharedBillUserModel> getUsers() {
+  List<Member> getUsers() {
     final List<dynamic>? data = _box.read(_usersKey);
     if (data == null) return [];
-    return data.map((item) => SharedBillUserModel.fromJson(Map<String, dynamic>.from(item))).toList();
+    return data.map((item) => Member.fromJson(Map<String, dynamic>.from(item))).toList();
   }
 
-  Future<void> saveUsers(List<SharedBillUserModel> users) async {
+  Future<void> saveUsers(List<Member> users) async {
     final data = users.map((user) => user.toJson()).toList();
     await _box.write(_usersKey, data);
   }
 
-  Future<void> addUser(SharedBillUserModel user) async {
+  Future<void> addUser(Member user) async {
     final users = getUsers();
     users.add(user);
     await saveUsers(users);

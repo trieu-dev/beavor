@@ -19,6 +19,19 @@ class Member {
     }
     return parts.first[0].toUpperCase();
   }
+
+  factory Member.fromJson(Map<String, dynamic> json) =>
+      Member(
+        id: json['id'],
+        name: json['name'],
+        avatarColor: json['avatarColor'],
+      );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'avatarColor': avatarColor,
+  };
 }
 
 // Sample data matching the Stitch mockup
