@@ -5,6 +5,7 @@ import 'package:luminous_ledger/screens/expense_splitter/split_expense_editor.da
 import 'package:luminous_ledger/screens/expense_splitter/split_result_table.dart';
 import 'package:luminous_ledger/screens/expense_splitter/swipeable_card.dart';
 import 'package:luminous_ledger/services/expense_splitter.dart';
+import 'package:luminous_ledger/services/local_storage_service.dart';
 import '../members/members_list_screen.dart';
 
 class SplitBillScreen extends StatefulWidget {
@@ -15,9 +16,37 @@ class SplitBillScreen extends StatefulWidget {
 }
 
 class _SplitBillScreenState extends State<SplitBillScreen> {
+  final LocalStorageService _storageService = Get.put(LocalStorageService());
   Expense? newExpense;
   List<Expense> bills = [];
   SplitResult? result;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBills();
+  }
+
+  void _loadBills() {
+    final savedBills = _storageService.getBills();
+    setState(() {
+      bills = savedBills;
+      if (bills.isNotEmpty) {
+        result = ExpenseSplitter.calculateSettlements(bills);
+      }
+    });
+  }
+
+  void _saveBills() {
+    _storageService.saveBills(bills);
+    setState(() {
+      if (bills.isEmpty) {
+        result = null;
+      } else if (result != null) {
+        result = ExpenseSplitter.calculateSettlements(bills);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +56,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
         title: const Text('Chia hóa đơn nhóm'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          _buildMembersButton()
-        ],
+        actions: [_buildMembersButton()],
       ),
       body: PageView(
         children: [
@@ -37,21 +64,26 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             padding: const EdgeInsets.all(20),
             children: [
               ...bills.map(_buildBillGroupCard),
-              if (newExpense != null) SplitExpenseEditor(
-                onSave: (item) {
-                  setState(() {
-                    bills.add(item);
-                  });
-                },
-                onCancel: () {
-                  setState(() {
-                    newExpense = null;
-                  });
-                },
-              ),
+              if (newExpense != null)
+                SplitExpenseEditor(
+                  onSave: (item) {
+                    setState(() {
+                      bills.add(item);
+                      newExpense = null;
+                    });
+                    _saveBills();
+                  },
+                  onCancel: () {
+                    setState(() {
+                      newExpense = null;
+                    });
+                  },
+                ),
             ],
           ),
-          result == null ? Center(child: Text("No data")) : SplitResultTable(result: result!)
+          result == null
+              ? Center(child: Text("No data"))
+              : SplitResultTable(result: result!),
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -59,64 +91,70 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
-              Expanded(child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    newExpense = Expense.def();
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  // backgroundColor: const Color(0xFF9489FE),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: Color(0xFF9489FE)
-                    )
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      newExpense = Expense.def();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    // backgroundColor: const Color(0xFF9489FE),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Color(0xFF9489FE)),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, color: Color(0xFF9489FE)),
-                    SizedBox(width: 8),
-                    Text(
-                      'Nhóm',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF9489FE)),
-                    )
-                  ],
-                ),
-              )),
-              SizedBox(width: 16,),
-              Expanded(child: ElevatedButton(
-                onPressed: () {
-                  final result = ExpenseSplitter.calculateSettlements(bills);
-
-                  print('=== Non-payers pay ${result.primaryPayer} ===');
-                  for (final s in result.nonPayerSettlements) print(s);
-
-                  print('\n=== Payers settle among themselves ===');
-                  for (final s in result.payerSettlements) print(s);
-
-                  setState(() {
-                    this.result = result;
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF9489FE),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, color: Color(0xFF9489FE)),
+                      SizedBox(width: 8),
+                      Text(
+                        'Nhóm',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF9489FE),
+                        ),
+                      ),
+                    ],
                   ),
-                  elevation: 0,
                 ),
-                child: const Text(
-                  'Chia',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final result = ExpenseSplitter.calculateSettlements(bills);
+
+                    print('=== Non-payers pay ${result.primaryPayer} ===');
+                    for (final s in result.nonPayerSettlements) print(s);
+
+                    print('\n=== Payers settle among themselves ===');
+                    for (final s in result.payerSettlements) print(s);
+
+                    setState(() {
+                      this.result = result;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF9489FE),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Chia',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ))
+              ),
             ],
           ),
         ),
@@ -137,11 +175,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             width: 1,
           ),
         ),
-        child: Icon(
-          Icons.people_rounded,
-          color: Colors.white,
-          size: 24,
-        )
+        child: Icon(Icons.people_rounded, color: Colors.white, size: 24),
       ),
     ).marginOnly(right: 20);
   }
@@ -150,43 +184,44 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
 
   Widget _buildBillGroupCard(Expense item) {
     return edittingIds.contains(item.id)
-          ? SplitExpenseEditor(
-              onSave: (item) {
-                int index = bills.indexWhere((o) => o.id == item.id);
-                if (index >= 0) {
-                  bills[index] = item;
-                }
+        ? SplitExpenseEditor(
+            onSave: (item) {
+              int index = bills.indexWhere((o) => o.id == item.id);
+              if (index >= 0) {
+                bills[index] = item;
+              }
+              edittingIds.remove(item.id);
+              setState(() {});
+              _saveBills();
+            },
+            onCancel: () {
+              setState(() {
                 edittingIds.remove(item.id);
-                setState(() { });
-              },
-              onCancel: () {
-                setState(() {
-                  edittingIds.remove(item.id);
-                });
-              },
-              item: item.clone(),
-            ).marginOnly(bottom: 20)
-          : SwipeableCard(
-              item: item,
-              onDuplicate: () {
-                int index = bills.indexWhere((o) => o.id == item.id);
-                if (index < 0) return;
+              });
+            },
+            item: item.clone(),
+          ).marginOnly(bottom: 20)
+        : SwipeableCard(
+            item: item,
+            onDuplicate: () {
+              int index = bills.indexWhere((o) => o.id == item.id);
+              if (index < 0) return;
 
-                final cloned = item.clone();
-                cloned.id = DateTime.now().millisecondsSinceEpoch.toString();
-                bills.insert(index, cloned);
-                setState(() { });
-              },
-              onEdit: () {
-                edittingIds.add(item.id);
-                setState(() { });
-              },
-              onRemove: () {
-                bills.removeWhere((o) => o.id == item.id);
-                setState(() { });
-              },
-            ).marginOnly(bottom: 20);
-
+              final cloned = item.clone();
+              cloned.id = DateTime.now().millisecondsSinceEpoch.toString();
+              bills.insert(index, cloned);
+              setState(() {});
+              _saveBills();
+            },
+            onEdit: () {
+              edittingIds.add(item.id);
+              setState(() {});
+            },
+            onRemove: () {
+              bills.removeWhere((o) => o.id == item.id);
+              setState(() {});
+              _saveBills();
+            },
+          ).marginOnly(bottom: 20);
   }
 }
-
