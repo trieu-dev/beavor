@@ -131,6 +131,10 @@ class AppTranslations extends Translations {
       'members_opt_edit': 'Edit Member',
       'members_opt_call': 'Contact',
       'members_opt_remove': 'Remove Member',
+      'split_bill_title': 'Split Group Bill',
+      'split_bill_no_data': 'No data',
+      'split_bill_group': 'Group',
+      'split_bill_split': 'Split',
     },
     'vi_VN': {
       'app_title': 'Beavor',
@@ -260,6 +264,10 @@ class AppTranslations extends Translations {
       'members_opt_edit': 'Chỉnh sửa',
       'members_opt_call': 'Liên hệ',
       'members_opt_remove': 'Xóa thành viên',
+      'split_bill_title': 'Chia hóa đơn nhóm',
+      'split_bill_no_data': 'Không có dữ liệu',
+      'split_bill_group': 'Nhóm',
+      'split_bill_split': 'Chia',
     },
   };
 }
