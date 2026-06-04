@@ -53,7 +53,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF0B101B),
       appBar: AppBar(
-        title: const Text('Chia hóa đơn nhóm'),
+        title: Text('split_bill_title'.tr),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [_buildMembersButton()],
@@ -82,7 +82,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             ],
           ),
           result == null
-              ? Center(child: Text("No data"))
+              ? Center(child: Text('split_bill_no_data'.tr))
               : SplitResultTable(result: result!),
         ],
       ),
@@ -114,7 +114,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
                       Icon(Icons.add, color: Color(0xFF9489FE)),
                       SizedBox(width: 8),
                       Text(
-                        'Nhóm',
+                        'split_bill_group'.tr,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -149,8 +149,8 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Chia',
+                  child: Text(
+                    'split_bill_split'.tr,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
