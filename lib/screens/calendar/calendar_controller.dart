@@ -27,6 +27,14 @@ class CalendarController extends GetxController {
     }
   }
 
+  void onPageChanged(DateTime focused) {
+    focusedDay.value = focused;
+    final start = DateTime(focused.year, focused.month, 1);
+    final end = DateTime(focused.year, focused.month + 1, 1)
+        .subtract(const Duration(milliseconds: 1));
+    transactionController.setDateRange(start, end);
+  }
+
   void _fetchTransactionsForDay(DateTime date) {
     final dayTransactions = transactionController.transactions.where((t) => isSameDay(t.date, date)).toList();
     dailyTransactions.assignAll(dayTransactions);
