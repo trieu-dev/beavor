@@ -85,6 +85,7 @@ class CalendarScreen extends StatelessWidget {
                 selectedDayPredicate: (day) =>
                     controller.isSameDay(controller.selectedDay.value, day),
                 onDaySelected: controller.onDaySelected,
+                onPageChanged: controller.onPageChanged,
                 calendarFormat: CalendarFormat.month,
                 headerStyle: HeaderStyle(
                   formatButtonVisible: false,
