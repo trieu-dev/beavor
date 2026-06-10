@@ -20,6 +20,8 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
   Expense? newExpense;
   List<Expense> bills = [];
   SplitResult? result;
+  bool isLinking = false;
+  String? linkingId;
 
   @override
   void initState() {
@@ -89,76 +91,67 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      newExpense = Expense.def();
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    // backgroundColor: const Color(0xFF9489FE),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: Color(0xFF9489FE)),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, color: Color(0xFF9489FE)),
-                      SizedBox(width: 8),
-                      Text(
-                        'split_bill_group'.tr,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF9489FE),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final result = ExpenseSplitter.calculateSettlements(bills);
-
-                    print('=== Non-payers pay ${result.primaryPayer} ===');
-                    for (final s in result.nonPayerSettlements) print(s);
-
-                    print('\n=== Payers settle among themselves ===');
-                    for (final s in result.payerSettlements) print(s);
-
-                    setState(() {
-                      this.result = result;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF9489FE),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'split_bill_split'.tr,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: isLinking ? linkActions() : splitActions(),
         ),
       ),
+    );
+  }
+
+  Widget splitActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: AddGroupButton(
+            onPressed: () {
+              setState(() {
+                newExpense = Expense.def();
+              });
+            }
+          )
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: SplitButton(
+            onPressed: () {
+              final result = ExpenseSplitter.calculateSettlements(bills);
+
+              print('=== Non-payers pay ${result.primaryPayer} ===');
+              for (final s in result.nonPayerSettlements) print(s);
+
+              print('\n=== Payers settle among themselves ===');
+              for (final s in result.payerSettlements) print(s);
+
+              setState(() {
+                this.result = result;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget linkActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: CancelButton(
+            onPressed: () {
+              isLinking = false;
+              linkingId = null;
+              setState(() {});
+            }
+          )
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: SaveButton(
+            onPressed: () {
+              _saveBills();
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -202,6 +195,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             item: item.clone(),
           ).marginOnly(bottom: 20)
         : SwipeableCard(
+            linkingId: linkingId,
             item: item,
             onDuplicate: () {
               int index = bills.indexWhere((o) => o.id == item.id);
@@ -217,6 +211,16 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
               edittingIds.add(item.id);
               setState(() {});
             },
+            onStartLink: (value) {
+              isLinking = true;
+              item.linkId = value;
+              linkingId = value;
+              setState(() {});
+            },
+            onLink: () {
+              item.linkId = item.linkId == null ? linkingId : null;
+              setState(() {});
+            },
             onRemove: () {
               bills.removeWhere((o) => o.id == item.id);
               setState(() {});
@@ -224,4 +228,111 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
             },
           ).marginOnly(bottom: 20);
   }
+}
+
+class AddGroupButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const AddGroupButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: baseSecondaryButton(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add, color: Color(0xFF9489FE)),
+          SizedBox(width: 8),
+          Text(
+            'split_bill_group'.tr,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF9489FE),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SplitButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const SplitButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: basePrimaryButton(),
+      child: Text(
+        'split_bill_split'.tr,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+class CancelButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const CancelButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: baseSecondaryButton(),
+      child: Text(
+        'cancel'.tr,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF9489FE),
+        ),
+      )
+    );
+  }
+}
+
+class SaveButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const SaveButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: basePrimaryButton(),
+      child: Text(
+        'save'.tr,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+ButtonStyle basePrimaryButton() {
+  return ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF9489FE),
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    elevation: 0,
+  );
+}
+
+ButtonStyle baseSecondaryButton() {
+  return ElevatedButton.styleFrom(
+    backgroundColor: Colors.transparent,
+    // backgroundColor: const Color(0xFF9489FE),
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: Color(0xFF9489FE)),
+    ),
+    elevation: 0,
+  );
 }

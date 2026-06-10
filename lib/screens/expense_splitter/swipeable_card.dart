@@ -7,6 +7,10 @@ import 'package:luminous_ledger/models/expense.dart';
 import 'package:luminous_ledger/models/member.dart';
 
 class SwipeableCard extends StatelessWidget {
+  final String? linkingId;
+  final VoidCallback onLink;
+  final Function(String) onStartLink;
+
   final Expense item;
   final VoidCallback onDuplicate;
   final VoidCallback onEdit;
@@ -14,9 +18,12 @@ class SwipeableCard extends StatelessWidget {
 
   const SwipeableCard({
     super.key,
+    this.linkingId,
     required this.item,
     required this.onDuplicate,
     required this.onEdit,
+    required this.onLink,
+    required this.onStartLink,
     required this.onRemove,
   });
 
@@ -45,6 +52,12 @@ class SwipeableCard extends StatelessWidget {
             foregroundColor: Colors.white,
             icon: Icons.edit_rounded,
           ),
+          SlidableAction(
+            onPressed: (_) => onEdit(),
+            backgroundColor: const Color(0xFFFF9E00),
+            foregroundColor: Colors.white,
+            icon: Icons.link,
+          ),
           // Remove
           SlidableAction(
             onPressed: (_) => onRemove(),
@@ -57,15 +70,23 @@ class SwipeableCard extends StatelessWidget {
       ),
 
       // The card itself
-      child: _CardContent(item: item),
+      child: _CardContent(item: item, linkingId: linkingId, onStartLink: onStartLink, onLink: onLink),
     );
   }
 }
 
 class _CardContent extends StatelessWidget {
+  final String? linkingId;
   final Expense item;
+  final VoidCallback onLink;
+  final Function(String) onStartLink;
 
-  const _CardContent({required this.item});
+  const _CardContent({
+    required this.item,
+    required this.onLink,
+    required this.onStartLink,
+    this.linkingId
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +94,8 @@ class _CardContent extends StatelessWidget {
   }
 
   Widget _buildBillGroupCardViewer(Expense item) {
+    bool isLinking = linkingId != null;
+    bool isSelected = (isLinking && linkingId == item.linkId);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -85,16 +108,23 @@ class _CardContent extends StatelessWidget {
       ),
       child: Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF0B101B),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(
-            Icons.receipt_long_rounded,
-            color: Color(0xFF9489FE),
-            size: 20,
+        GestureDetector(
+          onLongPress: () {
+            onStartLink(item.linkId ?? item.id);
+          },
+          onTap: onLink,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFF9489FE) : const Color(0xFF161C2C),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Color(0xFF9489FE))
+            ),
+            child: Icon(
+              isLinking ? Icons.link : Icons.receipt_long_rounded,
+              color: isSelected ? Color(0xFFFFFFFF) : Color(0xFF9489FE),
+              size: 20,
+            ),
           ),
         ),
         const SizedBox(width: 16),
