@@ -19,6 +19,7 @@ class Expense {
       Expense(id: "", payerId: '', amount: 0, participantIds: [], title: '');
 
   double get sharePerPerson => amount / participantIds.length;
+  String get shareId => linkId ?? id;
 
   Expense clone() => Expense.fromMap(toMap());
 
