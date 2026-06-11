@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:get/get.dart';
 import 'package:luminous_ledger/models/expense.dart';
 import 'package:luminous_ledger/models/settlement.dart';
 
@@ -29,9 +30,23 @@ class ExpenseSplitter {
     final payers = expenses.map((e) => e.payerId).toSet();
     final nonPayers = allParticipants.difference(payers);
 
+    List<Expense> refinedExpenses = [];
+    List<String> shareIds = expenses.map((x) => x.shareId).toSet().toList();
+    for (final id in shareIds) {
+      final bills = expenses.where((x) => x.shareId == id).toList();
+      final item = Expense(
+        id: id,
+        payerId: "",
+        title: "",
+        amount: bills.map((x) => x.amount).reduce((a, b) => a + b),
+        participantIds: bills.mapMany((x) => x.participantIds).toList()
+      );
+      refinedExpenses.add(item);
+    }
+
     // --- Step 2: Calculate each person's fair share across ALL expenses ---
     final Map<String, double> totalOwed = {}; // how much each person should pay
-    for (final expense in expenses) {
+    for (final expense in refinedExpenses) {
       final share = expense.sharePerPerson;
       for (final p in expense.participantIds) {
         totalOwed[p] = (totalOwed[p] ?? 0) + share;
