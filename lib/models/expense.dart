@@ -22,6 +22,12 @@ class Expense {
   String get shareId => linkId ?? id;
 
   Expense clone() => Expense.fromMap(toMap());
+  Expense duplicate() {
+    Expense item = Expense.fromMap(toMap());
+    item.id = DateTime.now().millisecondsSinceEpoch.toString();
+    item.linkId = null;
+    return item;
+  }
 
   @override
   String toString() => '$payerId → $title - $amount - ${participantIds.join(', ')}';
