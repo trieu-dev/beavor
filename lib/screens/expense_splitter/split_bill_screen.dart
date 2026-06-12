@@ -19,6 +19,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
   final LocalStorageService _storageService = Get.put(LocalStorageService());
   Expense? newExpense;
   List<Expense> bills = [];
+  List<Expense> originalBills = [];
   SplitResult? result;
   bool isLinking = false;
   String? linkingId;
@@ -137,6 +138,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
         Expanded(
           child: CancelButton(
             onPressed: () {
+              bills = originalBills;
               isLinking = false;
               linkingId = null;
               setState(() {});
@@ -215,6 +217,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
               isLinking = true;
               item.linkId = value;
               linkingId = value;
+              originalBills = bills.map((x) => x.clone()).toList();
               setState(() {});
             },
             onLink: () {
