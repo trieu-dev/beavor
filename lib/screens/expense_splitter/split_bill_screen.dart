@@ -19,6 +19,13 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
   final LocalStorageService _storageService = Get.put(LocalStorageService());
   Expense? newExpense;
   List<Expense> bills = [];
+  Map<String, List<Expense>> get mShareId2Bilss {
+    Map<String, List<Expense>> grouped = {};
+    for (final item in bills) {
+      grouped.putIfAbsent(item.shareId, () => []).add(item);
+    }
+    return grouped;
+  }
   List<Expense> originalBills = [];
   SplitResult? result;
   bool isLinking = false;
@@ -66,7 +73,22 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              ...bills.map(_buildBillGroupCard),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder:(context, index) {
+                  final list = mShareId2Bilss.values.elementAt(index);
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder:(context, index) => _buildBillGroupCard(list[index]),
+                    separatorBuilder:(context, index) => Icon(Icons.link, color: Color(0xFF9489FE)),
+                    itemCount: list.length
+                  );
+                },
+                separatorBuilder:(context, index) => SizedBox(height: 20),
+                itemCount: mShareId2Bilss.length
+              ),
               if (newExpense != null)
                 SplitExpenseEditor(
                   onSave: (item) {
@@ -132,6 +154,11 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
     );
   }
 
+  void endLinking() {
+    isLinking = false;
+    linkingId = null;
+  }
+
   Widget linkActions() {
     return Row(
       children: [
@@ -139,8 +166,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           child: CancelButton(
             onPressed: () {
               bills = originalBills;
-              isLinking = false;
-              linkingId = null;
+              endLinking();
               setState(() {});
             }
           )
@@ -150,6 +176,8 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           child: SaveButton(
             onPressed: () {
               _saveBills();
+              endLinking();
+              setState(() {});
             },
           ),
         ),
@@ -203,8 +231,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
               int index = bills.indexWhere((o) => o.id == item.id);
               if (index < 0) return;
 
-              final cloned = item.clone();
-              cloned.id = DateTime.now().millisecondsSinceEpoch.toString();
+              final cloned = item.duplicate();
               bills.insert(index, cloned);
               setState(() {});
               _saveBills();
@@ -229,7 +256,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
               setState(() {});
               _saveBills();
             },
-          ).marginOnly(bottom: 20);
+          );
   }
 }
 
