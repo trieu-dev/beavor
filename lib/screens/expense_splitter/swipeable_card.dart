@@ -52,12 +52,6 @@ class SwipeableCard extends StatelessWidget {
             foregroundColor: Colors.white,
             icon: Icons.edit_rounded,
           ),
-          SlidableAction(
-            onPressed: (_) => onEdit(),
-            backgroundColor: const Color(0xFFFF9E00),
-            foregroundColor: Colors.white,
-            icon: Icons.link,
-          ),
           // Remove
           SlidableAction(
             onPressed: (_) => onRemove(),
