@@ -9,6 +9,14 @@ import '../calendar/calendar_screen.dart';
 import '../living/living_expenses_screen.dart';
 import '../add_transaction/add_transaction_screen.dart';
 import '../../services/update_service.dart';
+
+enum MainTab {
+  dashboard,
+  calendar,
+  statistic,
+  living,
+}
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -18,6 +26,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  List<int> visited = [0];
 
   @override
   void initState() {
@@ -30,14 +39,15 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     DashboardScreen(),
-    const CalendarScreen(),
+    CalendarScreen(),
     ExpenseAnalysisScreen(),
-    const LivingExpensesScreen(),
+    LivingExpensesScreen(),
   ];
 
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
+      visited.add(index);
     });
   }
 
@@ -47,7 +57,10 @@ class _MainScreenState extends State<MainScreen> {
       extendBody: true, // Crucial for glassmorphism to show body behind bar
       body: IndexedStack(
         index: _currentIndex,
-        children: _screens,
+        children: MainTab.values.map((o) {
+          return visited.contains(o.index) ? _screens.elementAt(o.index) : SizedBox.shrink();
+        }).toList(),
+        // children: _screens,
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(top: 30), // Offset slightly
