@@ -51,10 +51,6 @@ class TransactionController extends GetxController {
         categoryData.map((e) => CategoryModel.fromMap(e)).toList(),
       );
 
-      // 2. Fetch Wallets
-      final walletData = await _client.from('wallets').select();
-      wallets.assignAll(walletData.map((e) => WalletModel.fromMap(e)).toList());
-
       // 3. Fetch Transactions filtered by date range
       final transactionData = await _client
           .from('transactions')
