@@ -417,7 +417,7 @@ class LivingExpensesScreen extends GetView<LivingExpenseController> {
             decoration: const InputDecoration(
               isDense: true,
               border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
               hintText: '0',
               hintStyle: TextStyle(color: Colors.white12),
             ),

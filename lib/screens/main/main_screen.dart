@@ -54,43 +54,45 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Crucial for glassmorphism to show body behind bar
-      body: IndexedStack(
-        index: _currentIndex,
-        children: MainTab.values.map((o) {
-          return visited.contains(o.index) ? _screens.elementAt(o.index) : SizedBox.shrink();
-        }).toList(),
-        // children: _screens,
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(top: 30), // Offset slightly
-        child: Container(
-          height: 64,
-          width: 64,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: AppColors.primaryGradient,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.4),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: FloatingActionButton(
-            onPressed: () => Get.to(() => AddTransactionScreen()),
-            backgroundColor: Colors.transparent,
-            foregroundColor: AppColors.onPrimary,
-            elevation: 0,
-            highlightElevation: 0,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add_rounded, size: 32),
+      body: SafeArea(child: Scaffold(
+        extendBody: true, // Crucial for glassmorphism to show body behind bar
+        body: IndexedStack(
+          index: _currentIndex,
+          children: MainTab.values.map((o) {
+            return visited.contains(o.index) ? _screens.elementAt(o.index) : SizedBox.shrink();
+          }).toList(),
+          // children: _screens,
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(top: 30), // Offset slightly
+          child: Container(
+            height: 64,
+            width: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: AppColors.primaryGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: FloatingActionButton(
+              onPressed: () => Get.to(() => AddTransactionScreen()),
+              backgroundColor: Colors.transparent,
+              foregroundColor: AppColors.onPrimary,
+              elevation: 0,
+              highlightElevation: 0,
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add_rounded, size: 32),
+            ),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildModernNavBar(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: _buildModernNavBar(),
+      )),
     );
   }
 
