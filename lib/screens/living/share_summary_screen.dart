@@ -190,6 +190,30 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
                             ),
                           );
                         }),
+                        // ── Attached photo ──────────────────────────────
+                        if (controller.attachedPhoto.value != null) ...[
+                          const SizedBox(height: 20),
+                          const Divider(color: Colors.white12),
+                          const SizedBox(height: 12),
+                          Text(
+                            'attached_photo'.tr,
+                            style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.file(
+                              controller.attachedPhoto.value!,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                       ],
                     );
                   }),
@@ -197,8 +221,13 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
               ),
             ),
           ),
+          // ── Action buttons ───────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _PhotoActionRow(controller: controller),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             child: SizedBox(
               width: double.infinity,
               height: 60,
@@ -262,6 +291,115 @@ class _ShareSummaryScreenState extends State<ShareSummaryScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Photo action row widget ──────────────────────────────────────────────────
+
+class _PhotoActionRow extends StatelessWidget {
+  const _PhotoActionRow({required this.controller});
+
+  final LivingExpenseController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final photo = controller.attachedPhoto.value;
+
+      return Row(
+        children: [
+          // Camera button
+          Expanded(
+            child: _OutlineActionButton(
+              icon: Icons.camera_alt_rounded,
+              label: 'take_photo'.tr,
+              onTap: () => controller.pickPhoto(fromCamera: true),
+            ),
+          ),
+          const SizedBox(width: 20),
+          // Gallery button
+          Expanded(
+            child: _OutlineActionButton(
+              icon: Icons.photo_library_rounded,
+              label: 'choose_photo'.tr,
+              onTap: () => controller.pickPhoto(fromCamera: false),
+            ),
+          ),
+          // Remove button — only visible when a photo is attached
+          if (photo != null) ...[
+            const SizedBox(width: 12),
+            _RemovePhotoButton(onTap: () => controller.clearPhoto()),
+          ],
+        ],
+      );
+    });
+  }
+}
+
+class _OutlineActionButton extends StatelessWidget {
+  const _OutlineActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: const Color(0xFF161C2C),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFF9489FE).withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: const Color(0xFF9489FE), size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF9489FE),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RemovePhotoButton extends StatelessWidget {
+  const _RemovePhotoButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 52,
+        width: 52,
+        decoration: BoxDecoration(
+          color: const Color(0xFF161C2C),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.redAccent.withValues(alpha: 0.4)),
+        ),
+        child: const Icon(Icons.close_rounded, color: Colors.redAccent, size: 20),
+      ),
     );
   }
 }
