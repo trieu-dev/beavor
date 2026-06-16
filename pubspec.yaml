@@ -51,6 +51,7 @@ dependencies:
   share_plus: ^13.1.0
   get_storage: ^2.1.1
   flutter_slidable: ^4.0.3
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

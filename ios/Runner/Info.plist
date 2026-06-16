@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Beavor needs camera access to attach a photo to your expense summary.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Beavor needs photo library access to pick an image for your expense summary.</string>
 </dict>
 </plist>
