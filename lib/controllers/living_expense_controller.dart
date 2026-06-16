@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../models/living_expense_model.dart';
 import '../core/services/supabase_service.dart';
@@ -10,6 +12,9 @@ class LivingExpenseController extends GetxController {
   var livingExpenses = <LivingExpenseModel>[].obs;
   var currentExpense = Rxn<LivingExpenseModel>();
   var isLoading = false.obs;
+  var attachedPhoto = Rxn<File>();
+
+  final _imagePicker = ImagePicker();
 
   @override
   void onInit() {
@@ -184,4 +189,27 @@ class LivingExpenseController extends GetxController {
       return e;
     });
   }
+
+  // ── Photo attachment ────────────────────────────────────────────────────────
+
+  Future<void> pickPhoto({required bool fromCamera}) async {
+    try {
+      final XFile? picked = await _imagePicker.pickImage(
+        source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+        imageQuality: 85,
+      );
+      if (picked != null) {
+        attachedPhoto.value = File(picked.path);
+      }
+    } catch (e) {
+      Get.printError(info: 'Error picking photo: $e');
+      Get.snackbar(
+        'error'.tr,
+        'Could not access camera / gallery',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void clearPhoto() => attachedPhoto.value = null;
 }
